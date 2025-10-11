@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-
-    public int maxHealth = 100;
-    int currentHealth;
+    #region EnemyHealthSystem
+    public int maxHealth;
+    public int currentHealth;
 
     void Start()
     {
@@ -27,11 +27,16 @@ public class Enemy : MonoBehaviour
     {
         Debug.Log("Enemy died");
 
-        //die anim
+        //Destroy(gameObject);
 
+        GetComponent<Collider2D>().enabled = false;
+        this.enabled = false;
+        //die anim
         //disable the enemy
 
-        Destroy(gameObject);
     }
+    #endregion
+
+
 
 }
