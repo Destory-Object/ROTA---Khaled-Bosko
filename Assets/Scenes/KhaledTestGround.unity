@@ -256,6 +256,16 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!1 &874641985 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8170971104435364745, guid: afec03c4715bacf4b8bf4b1079b772ae, type: 3}
+  m_PrefabInstance: {fileID: 1360019064883608509}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1013723878 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2218553081968806301, guid: 40f419f832fd09545b6f698546da2d26, type: 3}
+  m_PrefabInstance: {fileID: 1202029525165357162}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1202029525165357162
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -266,7 +276,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2218553081968806301, guid: 40f419f832fd09545b6f698546da2d26, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.56
+      value: 4.81
       objectReference: {fileID: 0}
     - target: {fileID: 2218553081968806301, guid: 40f419f832fd09545b6f698546da2d26, type: 3}
       propertyPath: m_LocalPosition.y
@@ -307,6 +317,34 @@ PrefabInstance:
     - target: {fileID: 4884016599557697306, guid: 40f419f832fd09545b6f698546da2d26, type: 3}
       propertyPath: m_Name
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 6180122495280628030, guid: 40f419f832fd09545b6f698546da2d26, type: 3}
+      propertyPath: Speed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6180122495280628030, guid: 40f419f832fd09545b6f698546da2d26, type: 3}
+      propertyPath: Player
+      value: 
+      objectReference: {fileID: 874641985}
+    - target: {fileID: 6180122495280628030, guid: 40f419f832fd09545b6f698546da2d26, type: 3}
+      propertyPath: EnemyAI
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6180122495280628030, guid: 40f419f832fd09545b6f698546da2d26, type: 3}
+      propertyPath: maxHealth
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 6180122495280628030, guid: 40f419f832fd09545b6f698546da2d26, type: 3}
+      propertyPath: enemyPosition
+      value: 
+      objectReference: {fileID: 1013723878}
+    - target: {fileID: 6180122495280628030, guid: 40f419f832fd09545b6f698546da2d26, type: 3}
+      propertyPath: EnemyViewRange
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6180122495280628030, guid: 40f419f832fd09545b6f698546da2d26, type: 3}
+      propertyPath: PlayerLayers.m_Bits
+      value: 64
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

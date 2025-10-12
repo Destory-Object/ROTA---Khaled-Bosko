@@ -13,7 +13,7 @@ public class PlayerCombat : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             Attack();
-            Debug.Log("dennis");
+            Debug.Log("MouseClick");
         }
     }
 
