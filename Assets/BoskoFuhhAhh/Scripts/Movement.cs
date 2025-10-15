@@ -1,49 +1,94 @@
 using UnityEngine;
-
+using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class PlayerController : MonoBehaviour
 {
-    public float moveSpeed = 5f;     // Horizontal movement speed
-    public float jumpForce = 7f;     // Jump force
+    [SerializeField] float moveSpeed = 10f;
 
-    private Rigidbody2D rb;
-    private bool isGrounded;
+    [SerializeField] float jumpForce = 7f;
+   
+    [Header("Grounded Info")]
+    [SerializeField] float groundCheckRadius = 0.2f;
+    [SerializeField] Transform groundCheckPosition;
+    [SerializeField] LayerMask groundedLayers;
+    [SerializeField] bool isGrounded;
+
+
+    [Header("Coyote Info")]
+    [SerializeField] float CoyoteTime = 0.2f;
+    private float coyoteTimer = 0.0f;
+
+    InputAction moveAction;
+    InputAction jumpAction;
+
+    Vector2 moveVector;
+
+    Rigidbody2D playerRb;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        moveAction = InputSystem.actions.FindAction("Move");
+        jumpAction = InputSystem.actions.FindAction("Jump");    
+        playerRb = GetComponent<Rigidbody2D>();
+
+       // moveAction = InputSystem.actions.FindAction("Jump");
     }
 
-    
-    void Update()
+    private void Update()
     {
-        // Get horizontal input (-1 for left, 1 for right)
-        float moveInput = Input.GetAxisRaw("Horizontal");
+        ReadPlayerInputs();
+        CheckGrounded();
+        HandleCoyoteTime();
+    }
 
-        // Move the player horizontally
-        rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y);
+    private void FixedUpdate()
+    {
+        playerRb.linearVelocityX = moveVector.x * moveSpeed;
+    }
 
-        // Jumping
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+    void ReadPlayerInputs()
+    {
+        moveVector = moveAction.ReadValue<Vector2>();
+
+        if(jumpAction.WasPerformedThisFrame() && isGrounded)
         {
-            rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+            playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
     }
 
-    // Check if the player is grounded
-    private void OnCollisionEnter2D(Collision2D collision)
+
+    private void HandleCoyoteTime()
     {
-        if (collision.gameObject.CompareTag("Ground"))
+        if (isGrounded)
         {
-            isGrounded = true;
+            coyoteTimer = CoyoteTime;
+            
+            
+        }
+        else
+        {
+            if (coyoteTimer > 0)
+            {
+                coyoteTimer -= Time.deltaTime;
+            }
         }
     }
 
-    private void OnCollisionExit2D(Collision2D collision)
+
+    private void CheckGrounded()
     {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isGrounded = false;
-        }
+
+        isGrounded = Physics2D.OverlapCircle(groundCheckPosition.position, groundCheckRadius, groundedLayers);
     }
+
+
+    private void OnDrawGizmos()
+    {
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(groundCheckPosition.position, groundCheckRadius);
+    }
+
+
 }
