@@ -53,6 +53,8 @@ public class Enemy : MonoBehaviour
 
     private float Distance;
 
+    bool isInGambleMode = false;
+
     private void Update()
     {
         Distance = Vector2.Distance(transform.position, Player.transform.position);
@@ -68,44 +70,55 @@ public class Enemy : MonoBehaviour
                 break;
 
             case "Dodging":
-                DoDodge();
+                StartCoroutine(DoDodge());
 
                 break;
 
             case "Tackling":
-                DoTackling();
+                StartCoroutine(DoTackling());
 
                 break;
         }
+
+        
     }
 
     #region StateSystemFunctions
     void DoWalk()
     {
         Debug.Log("Walking");
+
         Collider2D[] hitPlayer = Physics2D.OverlapCircleAll(enemyPosition.position, EnemyViewRange, PlayerLayers);
 
         foreach (Collider2D Player in hitPlayer)
         {
             Debug.Log("We hit" + Player.name);
-            //Player.GetComponent<Enemy>().GambleMove();
+            if (isInGambleMode == false)
+            {
+                GambleMove();
+            }
+
         }
 
-        GambleMove();
-
     }
 
-    void DoDodge()
+    IEnumerator DoDodge()
     {
         Debug.Log("Dodging");
-        
+
+        yield return new WaitForSeconds(2);
+
+        EnemyAI = "Walking";
     }
 
-    void DoTackling()
+    IEnumerator DoTackling()
     {
-        Debug.Log("Dodging");
+        Debug.Log("Tackling");
         transform.position = Vector2.MoveTowards(this.transform.position, Player.transform.position, Speed * Time.deltaTime);
 
+        yield return new WaitForSeconds(3);
+
+        EnemyAI = "Walking";
     }
 
 
@@ -117,16 +130,25 @@ public class Enemy : MonoBehaviour
 
     void GambleMove()
     {
-        int Chance = Random.Range(1, 4);
+        isInGambleMode = true;
+        int Chance = Random.Range(1, 3);
         if (Chance == 1)
         {
             behavior = 1;
             EnemyAI = "Tackling";
+
+            isInGambleMode = false;
+            
+            
         }
         if (Chance == 2)
         {
             behavior = 2;
             EnemyAI = "Dodging";
+
+            isInGambleMode = false;
+            
+            
         }
         //if (Chance == 3)
         //{
