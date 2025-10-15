@@ -286,6 +286,7 @@ GameObject:
   - component: {fileID: 222059672}
   - component: {fileID: 222059671}
   - component: {fileID: 222059670}
+  - component: {fileID: 222059675}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -351,6 +352,9 @@ MonoBehaviour:
     m_Bits: 128
   isGrounded: 0
   CoyoteTime: 0.2
+  dashSpeed: 20
+  dashDuration: 0.5
+  isDashing: 0
 --- !u!50 &222059672
 Rigidbody2D:
   serializedVersion: 5
@@ -452,6 +456,24 @@ Transform:
   - {fileID: 1380290433}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &222059675
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 222059669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74adf7d1bb67f264192e12238a772de7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerCombat
+  attackPoint: {fileID: 0}
+  attackRange: 0.5
+  enemyLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  damageAmount: 0
 --- !u!1 &627474860
 GameObject:
   m_ObjectHideFlags: 0
