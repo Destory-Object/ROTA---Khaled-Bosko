@@ -1,0 +1,94 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
+
+public class PlayerController : MonoBehaviour
+{
+    [SerializeField] float moveSpeed = 10f;
+
+    [SerializeField] float jumpForce = 7f;
+   
+    [Header("Grounded Info")]
+    [SerializeField] float groundCheckRadius = 0.2f;
+    [SerializeField] Transform groundCheckPosition;
+    [SerializeField] LayerMask groundedLayers;
+    [SerializeField] bool isGrounded;
+
+
+    [Header("Coyote Info")]
+    [SerializeField] float CoyoteTime = 0.2f;
+    private float coyoteTimer = 0.0f;
+
+    InputAction moveAction;
+    InputAction jumpAction;
+
+    Vector2 moveVector;
+
+    Rigidbody2D playerRb;
+
+    void Start()
+    {
+        moveAction = InputSystem.actions.FindAction("Move");
+        jumpAction = InputSystem.actions.FindAction("Jump");    
+        playerRb = GetComponent<Rigidbody2D>();
+
+       // moveAction = InputSystem.actions.FindAction("Jump");
+    }
+
+    private void Update()
+    {
+        ReadPlayerInputs();
+        CheckGrounded();
+        HandleCoyoteTime();
+    }
+
+    private void FixedUpdate()
+    {
+        playerRb.linearVelocityX = moveVector.x * moveSpeed;
+    }
+
+    void ReadPlayerInputs()
+    {
+        moveVector = moveAction.ReadValue<Vector2>();
+
+        if(jumpAction.WasPerformedThisFrame() && isGrounded)
+        {
+            playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        }
+    }
+
+
+    private void HandleCoyoteTime()
+    {
+        if (isGrounded)
+        {
+            coyoteTimer = CoyoteTime;
+            
+            
+        }
+        else
+        {
+            if (coyoteTimer > 0)
+            {
+                coyoteTimer -= Time.deltaTime;
+            }
+        }
+    }
+
+
+    private void CheckGrounded()
+    {
+
+        isGrounded = Physics2D.OverlapCircle(groundCheckPosition.position, groundCheckRadius, groundedLayers);
+    }
+
+
+    private void OnDrawGizmos()
+    {
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(groundCheckPosition.position, groundCheckRadius);
+    }
+
+
+}
