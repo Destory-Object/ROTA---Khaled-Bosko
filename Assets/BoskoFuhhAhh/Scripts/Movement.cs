@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float groundCheckRadius = 0.2f;
     [SerializeField] Transform groundCheckPosition;
     [SerializeField] LayerMask groundedLayers;
-    [SerializeField] bool isGrounded;
+    bool isGrounded;
 
 
     [Header("Coyote Info")]
@@ -22,8 +22,9 @@ public class PlayerController : MonoBehaviour
     [Header("Dash Info")]
     [SerializeField] float dashSpeed = 20.0f;
     [SerializeField] float dashDuration = 0.5f;
-    [SerializeField] bool isDashing = false;
-   
+     bool isDashing = false;
+
+  
 
     InputAction moveAction;
     InputAction jumpAction;
@@ -55,7 +56,6 @@ public class PlayerController : MonoBehaviour
             playerRb.linearVelocityX = moveVector.x * moveSpeed;
 
         }
-            
     }
     void ReadPlayerInputs()
     {
@@ -69,7 +69,7 @@ public class PlayerController : MonoBehaviour
         if (dashAction.WasPerformedThisFrame())
         {
             isDashing = true;
-           // playerRb.linearVelocity = new Vector2(moveSpeed * dashSpeed, playerRb.linearVelocity.y);
+          
         }
 
         if(dashAction.WasReleasedThisFrame())
@@ -82,8 +82,6 @@ public class PlayerController : MonoBehaviour
         if (isGrounded)
         {
             coyoteTimer = CoyoteTime;
-            
-            
         }
         else
         {
