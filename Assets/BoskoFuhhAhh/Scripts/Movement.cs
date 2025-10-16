@@ -24,8 +24,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float dashDuration = 0.5f;
      bool isDashing = false;
 
-  
 
+    [Header("Input Actions")]
     InputAction moveAction;
     InputAction jumpAction;
     InputAction dashAction;
@@ -34,27 +34,40 @@ public class PlayerController : MonoBehaviour
 
     Rigidbody2D playerRb;
 
+    private SpriteRenderer spriteRenderer;
+
     void Start()
     {
         moveAction = InputSystem.actions.FindAction("Move");
         jumpAction = InputSystem.actions.FindAction("Jump");
         dashAction = InputSystem.actions.FindAction("Dash");
         playerRb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
     private void Update()
     {
         ReadPlayerInputs();
         CheckGrounded();
         HandleCoyoteTime();
+
+        if (moveVector.x > 0.01f)
+        {
+            spriteRenderer.flipX = false;
+            Debug.Log("Right");
+        }
+        else if (moveVector.x < -0.01f)
+        {
+            spriteRenderer.flipX = true;
+            Debug.Log("Left");
+        }
     }
     private void FixedUpdate()
-    {if(isDashing)
+    {if(isDashing)                       
         {
             playerRb.linearVelocityX = moveVector.x * dashSpeed;
         }   else
         {
             playerRb.linearVelocityX = moveVector.x * moveSpeed;
-
         }
     }
     void ReadPlayerInputs()
@@ -65,13 +78,10 @@ public class PlayerController : MonoBehaviour
         {
             playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
-
         if (dashAction.WasPerformedThisFrame())
         {
             isDashing = true;
-          
         }
-
         if(dashAction.WasReleasedThisFrame())
         {
             isDashing = false;
@@ -80,7 +90,7 @@ public class PlayerController : MonoBehaviour
     private void HandleCoyoteTime()
     {
         if (isGrounded)
-        {
+        { 
             coyoteTimer = CoyoteTime;
         }
         else
@@ -100,6 +110,4 @@ public class PlayerController : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(groundCheckPosition.position, groundCheckRadius);
     }
-
-
 }
