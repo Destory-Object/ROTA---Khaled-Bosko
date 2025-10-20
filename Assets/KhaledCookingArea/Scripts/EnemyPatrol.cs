@@ -40,7 +40,8 @@ public class EnemyPatrol : MonoBehaviour
     private Rigidbody2D rb;
 
     private Transform currentPoint;
-    public float Speed;
+    public float vSpeed;
+    public float hSpeed;
 
     void Start()
     {
@@ -54,11 +55,11 @@ public class EnemyPatrol : MonoBehaviour
         Vector2 point = currentPoint.position - transform.position;
         if(currentPoint == pointB.transform)
         {
-            rb.linearVelocity = new Vector2(Speed, 0);
+            rb.linearVelocity = new Vector2(vSpeed, hSpeed);
         }
         else
         {
-            rb.linearVelocity = new Vector2(-Speed, 0);
+            rb.linearVelocity = new Vector2(-vSpeed, hSpeed);
         }
 
         if(Vector2.Distance(transform.position, currentPoint.position) < 0.5f && currentPoint == pointB.transform)
