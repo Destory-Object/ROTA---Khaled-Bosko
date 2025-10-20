@@ -10,7 +10,6 @@ public class PlayerInputActions : MonoBehaviour
 
     private InputAction attackAction;
 
-    private PlayerInput playerInput;
 
 
     private void Awake()
