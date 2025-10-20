@@ -52,12 +52,12 @@ public class PlayerController : MonoBehaviour
 
         if (moveVector.x > 0.01f)
         {
-            spriteRenderer.flipX = false;
+            transform.rotation = Quaternion.Euler(0, 0, 0);
             Debug.Log("Right");
         }
         else if (moveVector.x < -0.01f)
         {
-            spriteRenderer.flipX = true;
+            transform.rotation = Quaternion.Euler(0, 180, 0);
             Debug.Log("Left");
         }
     }
