@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerCombat : MonoBehaviour
+public class PlayerInputActions : MonoBehaviour
 {
     public Transform attackPoint;
     public float attackRange = 0.5f;
@@ -15,8 +15,8 @@ public class PlayerCombat : MonoBehaviour
 
     private void Awake()
     {
-        
-        attackAction = InputSystem.FindAction("Attack");
+
+        attackAction = InputSystem.actions.FindAction("Attack");
 
         if (attackAction != null)
         {
