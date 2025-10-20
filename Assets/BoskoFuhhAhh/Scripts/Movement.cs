@@ -53,12 +53,12 @@ public class PlayerController : MonoBehaviour
         if (moveVector.x > 0.01f)
         {
             transform.rotation = Quaternion.Euler(0, 0, 0);
-            Debug.Log("Right");
+            //Debug.Log("Right");
         }
         else if (moveVector.x < -0.01f)
         {
             transform.rotation = Quaternion.Euler(0, 180, 0);
-            Debug.Log("Left");
+            //Debug.Log("Left");
         }
     }
     private void FixedUpdate()
