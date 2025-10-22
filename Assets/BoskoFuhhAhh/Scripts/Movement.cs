@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        ReadPlayerInputs();
+       // ReadPlayerInputs();
         CheckGrounded();
         HandleCoyoteTime();
 
@@ -74,6 +74,7 @@ public class PlayerController : MonoBehaviour
                 break;
 
             case "Dashing":
+                ReadPlayerInputs();
                 break;
 
             case "attacing":
@@ -120,10 +121,12 @@ public class PlayerController : MonoBehaviour
     {
         moveVector = moveAction.ReadValue<Vector2>();
 
-        if(jumpAction.WasPerformedThisFrame() && isGrounded)
+        if(jumpAction.WasPerformedThisFrame() && isGrounded && playerState == "Normal")
         {
             playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
+
+
         if (dashAction.WasPerformedThisFrame())
         {
             playerState = "Dashing";
