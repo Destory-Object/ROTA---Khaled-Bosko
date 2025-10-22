@@ -43,13 +43,15 @@ public class EnemyPatrol : MonoBehaviour
     public float vSpeed;
     public float hSpeed;
 
+    [SerializeField] bool horizontalMovement;
+    [SerializeField] bool verticalMovement;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         currentPoint = pointB.transform;
     }
 
-    // Update is called once per frame
     void Update()
     {
         Vector2 point = currentPoint.position - transform.position;
@@ -59,7 +61,7 @@ public class EnemyPatrol : MonoBehaviour
         }
         else
         {
-            rb.linearVelocity = new Vector2(-vSpeed, hSpeed);
+            rb.linearVelocity = new Vector2(-vSpeed, -hSpeed);
         }
 
         if(Vector2.Distance(transform.position, currentPoint.position) < 0.5f && currentPoint == pointB.transform)
@@ -78,7 +80,17 @@ public class EnemyPatrol : MonoBehaviour
     private void flip()
     {
         Vector3 localScale = transform.localScale;
+        
+        if(verticalMovement == true)
+        {
         localScale.x *= -1;
+        }
+        
+        if(horizontalMovement == true)
+        {
+        localScale.y *= -1;
+        }
+
         transform.localScale = localScale;
     }
     #endregion
