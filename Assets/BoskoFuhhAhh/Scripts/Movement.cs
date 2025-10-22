@@ -36,6 +36,8 @@ public class PlayerController : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
 
+    [SerializeField] string playerState;
+
     void Start()
     {
         moveAction = InputSystem.actions.FindAction("Move");
@@ -60,15 +62,57 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.Euler(0, 180, 0);
             //Debug.Log("Left");
         }
-    }
-    private void FixedUpdate()
-    {if(isDashing)                       
+
+
+        switch (playerState)
         {
-            playerRb.linearVelocityX = moveVector.x * dashSpeed;
-        }   else
-        {
-            playerRb.linearVelocityX = moveVector.x * moveSpeed;
+            case "mormal":
+         
+                ReadPlayerInputs();
+                break;
+
+            case "Dashing":
+                break;
+
+            case "attacing":
+                ReadPlayerInputs();
+                break;
+
         }
+
+
+
+
+
+    }
+    private void FixedUpdate() {
+
+
+
+        switch (playerState)
+        {
+            case "mormal":
+                NormalMovement();
+                break;
+
+            case "Dashing":
+                PlayerIsDashing();
+                break;
+
+            case "attacing":
+                break;
+
+        }
+
+    }
+
+    void NormalMovement()
+    {
+        playerRb.linearVelocityX = moveVector.x * moveSpeed;
+    }
+    void PlayerIsDashing()
+    {
+        playerRb.linearVelocityX = moveVector.x * dashSpeed;
     }
     void ReadPlayerInputs()
     {
@@ -80,11 +124,11 @@ public class PlayerController : MonoBehaviour
         }
         if (dashAction.WasPerformedThisFrame())
         {
-            isDashing = true;
+            playerState = "Dashing";
         }
         if(dashAction.WasReleasedThisFrame())
         {
-            isDashing = false;
+            playerState = "Normal";
         }
     }
     private void HandleCoyoteTime()
