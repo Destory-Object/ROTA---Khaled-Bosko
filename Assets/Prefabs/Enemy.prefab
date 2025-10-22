@@ -11,11 +11,11 @@ GameObject:
   - component: {fileID: 2218553081968806301}
   - component: {fileID: 8158505081876624295}
   - component: {fileID: 2806785853565846590}
-  - component: {fileID: 6180122495280628030}
   - component: {fileID: 1650043424487503785}
+  - component: {fileID: 3076108234766310406}
   m_Layer: 3
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -129,29 +129,6 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
---- !u!114 &6180122495280628030
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4884016599557697306}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 611d136ad2c30894bb0d51772fa2413a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  EnemyAI: 
-  enemyPosition: {fileID: 2218553081968806301}
-  EnemyViewRange: 3
-  PlayerLayers:
-    serializedVersion: 2
-    m_Bits: 64
-  maxHealth: 400
-  currentHealth: 0
-  Player: {fileID: 0}
-  Speed: 1
-  behavior: 0
 --- !u!114 &1650043424487503785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,7 +142,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyPatrol
   maxHealth: 400
-  currentHealth: 0
+  currentHealth: 400
   pointA: {fileID: 0}
   pointB: {fileID: 0}
-  Speed: 0
+  vSpeed: 2
+  hSpeed: 0
+  horizontalMovement: 0
+  verticalMovement: 0
+--- !u!50 &3076108234766310406
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4884016599557697306}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
