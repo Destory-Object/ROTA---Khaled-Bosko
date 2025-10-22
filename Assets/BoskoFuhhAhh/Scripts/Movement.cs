@@ -55,18 +55,6 @@ public class PlayerController : MonoBehaviour
         CheckGrounded();
         HandleCoyoteTime();
 
-        if (moveVector.x > 0.01f)
-        {
-            transform.rotation = Quaternion.Euler(0, 0, 0);
-            //Debug.Log("Right");
-        }
-        else if (moveVector.x < -0.01f)
-        {
-            transform.rotation = Quaternion.Euler(0, 180, 0);
-            //Debug.Log("Left");
-        }
-
-
         switch (playerState)
         {
             case "Normal":
@@ -81,17 +69,20 @@ public class PlayerController : MonoBehaviour
             case "attacing":
                 ReadPlayerInputs();
                 break;
-
         }
-
-
-
-
-
     }
     private void FixedUpdate() {
 
-
+        if (moveVector.x > 0.01f)
+        {
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+            //Debug.Log("Right");
+        }
+        else if (moveVector.x < -0.01f)
+        {
+            transform.rotation = Quaternion.Euler(0, 180, 0);
+            //Debug.Log("Left");
+        }
 
         switch (playerState)
         {
@@ -105,11 +96,8 @@ public class PlayerController : MonoBehaviour
 
             case "attacing":
                 break;
-
         }
-
     }
-
     void NormalMovement()
     {
         playerRb.linearVelocityX = moveVector.x * moveSpeed;
@@ -124,6 +112,11 @@ public class PlayerController : MonoBehaviour
 
         if(jumpAction.WasPerformedThisFrame() && isGrounded && playerState == "Normal")
         {
+            playerRb.linearVelocity = Vector2.zero;
+            playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        } else if(jumpAction.WasPerformedThisFrame() && !isGrounded && coyoteTimer > 0)
+        {
+            playerRb.linearVelocity = Vector2.zero;
             playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
 
