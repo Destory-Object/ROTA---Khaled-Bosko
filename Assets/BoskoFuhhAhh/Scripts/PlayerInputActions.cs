@@ -50,15 +50,19 @@ public class PlayerInputActions : MonoBehaviour
         }
     }
 
+    private void Parrying()
+    {
+        //om du klickar F så kommer den köra Parry();
+    }
+
     IEnumerator Parry()
     {
 
         FindAnyObjectByType<PlayerController>().playerState = "Parry";
-   
         
         
-
         yield return new WaitForSeconds(0.3f);
+
 
         FindAnyObjectByType<PlayerController>().playerState = "Normal";
 

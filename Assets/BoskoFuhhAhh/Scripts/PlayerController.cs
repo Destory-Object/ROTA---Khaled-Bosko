@@ -69,6 +69,11 @@ public class PlayerController : MonoBehaviour
             case "attacing":
                 ReadPlayerInputs();
                 break;
+
+            case "parryState":
+                ReadPlayerInputs();
+
+                break;
         }
     }
     private void FixedUpdate() {
@@ -98,7 +103,7 @@ public class PlayerController : MonoBehaviour
                 break;
 
             case "parryState":
-
+                NormalMovement();
 
                 break;
         }
