@@ -24,6 +24,9 @@ public class EnemyPatrol : MonoBehaviour
     {
         Debug.Log("Enemy died");
 
+        vSpeed = 0;
+        hSpeed = 0;
+
         //Destroy(gameObject);
 
         GetComponent<Collider2D>().enabled = false;
