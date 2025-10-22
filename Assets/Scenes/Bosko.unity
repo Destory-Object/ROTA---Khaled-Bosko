@@ -745,7 +745,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8289038627729587650, guid: 602f149a1b92df74ea9c1d514c292749, type: 3}
       propertyPath: jumpForce
-      value: 8
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 8289038627729587650, guid: 602f149a1b92df74ea9c1d514c292749, type: 3}
+      propertyPath: playerState
+      value: Normal
       objectReference: {fileID: 0}
     - target: {fileID: 8668062292249789372, guid: 602f149a1b92df74ea9c1d514c292749, type: 3}
       propertyPath: m_GravityScale

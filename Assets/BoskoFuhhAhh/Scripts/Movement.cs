@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -149,7 +150,7 @@ public class PlayerController : MonoBehaviour
                 coyoteTimer -= Time.deltaTime;
             }
         }
-    }
+    } 
     private void CheckGrounded()
     {
         isGrounded = Physics2D.OverlapCircle(groundCheckPosition.position, groundCheckRadius, groundedLayers);
