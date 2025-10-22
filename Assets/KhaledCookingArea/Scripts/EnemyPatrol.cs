@@ -16,6 +16,8 @@ public class EnemyPatrol : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            vSpeed = 0;
+            hSpeed = 0;
             Die();
         }
     }
@@ -23,10 +25,7 @@ public class EnemyPatrol : MonoBehaviour
     void Die()
     {
         Debug.Log("Enemy died");
-
-        vSpeed = 0;
-        hSpeed = 0;
-
+               
         //Destroy(gameObject);
 
         GetComponent<Collider2D>().enabled = false;
