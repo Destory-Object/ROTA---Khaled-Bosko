@@ -45,6 +45,8 @@ public class PlayerController : MonoBehaviour
         dashAction = InputSystem.actions.FindAction("Dash");
         playerRb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        playerState = "Normal";
     }
     private void Update()
     {
@@ -66,7 +68,7 @@ public class PlayerController : MonoBehaviour
 
         switch (playerState)
         {
-            case "mormal":
+            case "Normal":
          
                 ReadPlayerInputs();
                 break;
@@ -91,7 +93,7 @@ public class PlayerController : MonoBehaviour
 
         switch (playerState)
         {
-            case "mormal":
+            case "Normal":
                 NormalMovement();
                 break;
 

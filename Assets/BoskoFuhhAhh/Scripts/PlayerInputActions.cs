@@ -43,7 +43,7 @@ public class PlayerInputActions : MonoBehaviour
         foreach (Collider2D enemy in hitEnemies)
         {
             Debug.Log("We hit " + enemy.name);
-            enemy.GetComponent<Enemy>().TakeDamage(damageAmount);
+            enemy.GetComponent<EnemyPatrol>().TakeDamage(damageAmount);
         }
     }
 
