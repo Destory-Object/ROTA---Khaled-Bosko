@@ -205,7 +205,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   CoyoteTime: 0.05
-  dashSpeed: 20
+  dashSpeed: 15
   dashDuration: 6
   playerState: Normal
 --- !u!70 &6205882660958575674
