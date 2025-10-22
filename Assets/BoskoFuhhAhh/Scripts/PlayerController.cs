@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
 
-    [SerializeField] string playerState;
+    [SerializeField] public string playerState;
 
     void Start()
     {
@@ -69,6 +69,11 @@ public class PlayerController : MonoBehaviour
             case "attacing":
                 ReadPlayerInputs();
                 break;
+
+            case "parryState":
+                ReadPlayerInputs();
+
+                break;
         }
     }
     private void FixedUpdate() {
@@ -95,6 +100,11 @@ public class PlayerController : MonoBehaviour
                 break;
 
             case "attacing":
+                break;
+
+            case "parryState":
+                NormalMovement();
+
                 break;
         }
     }

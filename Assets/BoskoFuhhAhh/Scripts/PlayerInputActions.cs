@@ -1,5 +1,7 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 
 public class PlayerInputActions : MonoBehaviour
 {
@@ -10,6 +12,7 @@ public class PlayerInputActions : MonoBehaviour
 
     private InputAction attackAction;
 
+  
 
 
     private void Awake()
@@ -46,6 +49,25 @@ public class PlayerInputActions : MonoBehaviour
             enemy.GetComponent<EnemyPatrol>().TakeDamage(damageAmount);
         }
     }
+
+    private void Parrying()
+    {
+        //om du klickar F så kommer den köra Parry();
+    }
+
+    IEnumerator Parry()
+    {
+
+        FindAnyObjectByType<PlayerController>().playerState = "Parry";
+        
+        
+        yield return new WaitForSeconds(0.3f);
+
+
+        FindAnyObjectByType<PlayerController>().playerState = "Normal";
+
+    }
+
 
     private void OnDrawGizmosSelected()
     {
