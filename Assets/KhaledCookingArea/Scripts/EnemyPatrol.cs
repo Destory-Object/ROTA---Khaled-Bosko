@@ -29,8 +29,7 @@ public class EnemyPatrol : MonoBehaviour
         //Destroy(gameObject);
 
         GetComponent<Collider2D>().enabled = false;
-        GetComponent<EnemyPatrol>().enabled = false;
-        //gameObject.SetActive(false);
+        gameObject.SetActive(false);
         //die anim
         //disable the enemy
 
