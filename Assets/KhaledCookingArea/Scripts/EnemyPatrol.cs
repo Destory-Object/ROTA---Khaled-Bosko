@@ -29,7 +29,8 @@ public class EnemyPatrol : MonoBehaviour
         //Destroy(gameObject);
 
         GetComponent<Collider2D>().enabled = false;
-        gameObject.SetActive(false);
+        GetComponent<EnemyPatrol>().enabled = false;
+        //gameObject.SetActive(false);
         //die anim
         //disable the enemy
 
@@ -50,6 +51,7 @@ public class EnemyPatrol : MonoBehaviour
 
     void Start()
     {
+        currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
         currentPoint = pointB.transform;
     }
