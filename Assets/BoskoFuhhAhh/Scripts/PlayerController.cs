@@ -110,15 +110,25 @@ public class PlayerController : MonoBehaviour
     }
     void NormalMovement()
     {
+        //Vector2 currentVelocity = playerRb.linearVelocity;
+        //currentVelocity.x = moveVector.x * moveSpeed;
+        //playerRb.linearVelocity = currentVelocity;
+        
+        
         playerRb.linearVelocityX = moveVector.x * moveSpeed;
     }
     void PlayerIsDashing()
     {
-        playerRb.linearVelocityX = moveVector.x * dashSpeed;
+
+        //Vector2 currentVelocity = playerRb.linearVelocity;
+        //currentVelocity.x = moveVector.x * moveSpeed;
+        //playerRb.linearVelocity = currentVelocity;
+
+       playerRb.linearVelocityX = moveVector.x * dashSpeed;
     }
     void ReadPlayerInputs()
     {
-        moveVector = moveAction.ReadValue<Vector2>();
+        moveVector = moveAction.ReadValue<Vector2>().normalized;
 
         if(jumpAction.WasPerformedThisFrame() && isGrounded && playerState == "Normal")
         {
@@ -131,7 +141,7 @@ public class PlayerController : MonoBehaviour
         }
 
 
-        if (dashAction.WasPerformedThisFrame())
+        if (dashAction.WasPerformedThisFrame() && isGrounded)
         {
             playerState = "Dashing";
         }
