@@ -263,3 +263,4 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   damageAmount: 40
+  parryWindowDuration: 0.5
