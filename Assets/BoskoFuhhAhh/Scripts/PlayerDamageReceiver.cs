@@ -4,6 +4,10 @@ using UnityEngine.Rendering;
 
 public class PlayerDamageReceiver : MonoBehaviour
 {
+
+    [SerializeField] int playerMaxHealth;
+    [SerializeField] int playerCurrentHealth;
+
     private PlayerInputActions inputActions;
 
     private void Start()
@@ -13,8 +17,25 @@ public class PlayerDamageReceiver : MonoBehaviour
         {
             Debug.Log("DU glOM script på player");
         }
+        
+        playerCurrentHealth = playerMaxHealth;
     }
-        private void OnTriggerEnter(Collider other)
+
+
+    private void Update()
+    {
+        if(playerCurrentHealth  <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        GetComponent<Collider2D>().enabled = false;
+        this.enabled = false;
+    }
+    private void OnTriggerEnter(Collider other)
     { 
         if (other.CompareTag("EnemyAttack"))
         {

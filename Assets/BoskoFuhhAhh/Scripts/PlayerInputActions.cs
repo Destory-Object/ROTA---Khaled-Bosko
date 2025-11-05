@@ -13,10 +13,10 @@ public class PlayerInputActions : MonoBehaviour
    
     InputAction parryAction;
     private InputAction attackAction;
+    private bool isParrying = false;
 
     private PlayerController pc;
 
-    private bool isParrying = false;
     [SerializeField] float parryWindowDuration = 0.5f;
         void Start()
     {
@@ -40,7 +40,7 @@ public class PlayerInputActions : MonoBehaviour
 
     private void OnEnable()
     {
-        attackAction?.Enable(); // ? betyder att den kan ha värdet null
+        attackAction?.Enable();
         if (parryAction != null)
             parryAction.Enable();
     }
