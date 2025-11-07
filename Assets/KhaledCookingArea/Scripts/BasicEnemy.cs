@@ -15,17 +15,48 @@ public class BasicEnemy : MonoBehaviour
     [SerializeField]
     private float
         groundcheckDistance,
-        wallcheckDistance;
+        wallcheckDistance,
+        movementSpeed,
+        maxHealth,
+        knockbackDuration;
+
     [SerializeField]
     private Transform
         groundcheck,
         wallcheck;
+
     [SerializeField]
     private LayerMask WhatIsGround;
+
+    [SerializeField]
+    private Vector2 knockbackSpeed;
+
+    private float 
+        currentHealth,
+        KnockbackStartTime;
+
+    private int 
+        facingDirection,
+        damageDirection;
+
+    private Vector2 movement;
 
     private bool
         groundDetected,
         wallDetected;
+
+    private GameObject alive;
+    private Rigidbody2D aliveRb;
+    private Animator aliveAnim;
+
+    private void Start()
+    {
+        alive = transform.Find("Alive").gameObject;
+        aliveRb = GetComponent<Rigidbody2D>();
+        aliveAnim = GetComponent<Animator>();
+
+        facingDirection = 1;
+    }
 
     private void Update()
     {
@@ -58,8 +89,12 @@ public class BasicEnemy : MonoBehaviour
 
         if (!groundDetected || wallDetected)
         {
-            //flip
-
+            Flip();
+        }
+        else
+        {
+            movement.Set(movementSpeed * facingDirection, aliveRb.linearVelocityY);
+            aliveRb.linearVelocity = movement;
         }
     }
 
@@ -72,24 +107,31 @@ public class BasicEnemy : MonoBehaviour
 
     private void EnterKnockbackState()
     {
-
+        KnockbackStartTime = Time.time;
+        movement.Set(knockbackSpeed.x * damageDirection, knockbackSpeed.y);
+        aliveRb.linearVelocity = movement;
+        aliveAnim.SetBool("Knockback", true);
     }
     
     private void UpdateKnockbackState()
     {
-
+        if (Time.time > KnockbackStartTime + knockbackDuration)
+        {
+            SwitchState(State.Walking);
+        }
     }
 
     private void ExitKnockbackState()
     {
-
+        aliveAnim.SetBool("Knockback", false);
     }
-    
+
     //---DeadState------------------------------------------------------------------------
 
     private void EnterDeadState()
     {
-
+        //spwan chunks and blood 
+        Destroy(gameObject);
     }
     
     private void UpdateDeadState()
@@ -103,6 +145,39 @@ public class BasicEnemy : MonoBehaviour
     }
 
     //---OtherFunctions------------------------------------------------------------------------
+
+    private void Damage(float[] attackDetails)
+    {
+        currentHealth -= attackDetails[0];
+
+        if( attackDetails[1] > alive.transform.position.x)
+        {
+            damageDirection = -1;
+        }
+        else
+        {
+            damageDirection = 1;
+        }
+
+        //HIT PARTIKEL SAKNAS LIL BRO (Gör parikelHanlder först, sen instantiate partikel) - Kl 07:15 Btw... 
+
+        if(currentHealth > 0.0f)
+        {
+            SwitchState(State.Knockback);
+        }
+        else if(currentHealth < 0.0f)
+        {
+            SwitchState(State.Dead);
+        }
+
+    }
+
+    private void Flip()
+    {
+        facingDirection *= -1;
+        alive.transform.Rotate(0.0f, 180.0f, 0.0f);
+
+    }
 
     private void SwitchState(State state)
     {
@@ -138,6 +213,13 @@ public class BasicEnemy : MonoBehaviour
 
         currentState = state;
 
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawLine(groundcheck.position, new Vector2(groundcheck.position.x, groundcheck.position.y - groundcheckDistance));
+        Gizmos.DrawLine(wallcheck.position, new Vector2(wallcheck.position.x + wallcheckDistance, wallcheck.position.y));
+        
     }
 
 }
