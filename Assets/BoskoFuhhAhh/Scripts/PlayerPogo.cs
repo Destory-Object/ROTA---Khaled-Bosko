@@ -3,36 +3,53 @@ using UnityEngine.InputSystem;
 
 public class PlayerPogo : MonoBehaviour
 {
-
-    public Transform attackPoint;
-    public float attackRange = 0.5f;
-    public LayerMask enemyLayers;
+    public Transform pogoAttackPoint;
+    public float pogoAttackRange = 0.5f;
+    public LayerMask enemies;
     [SerializeField] int damageAmount;
     private float bounceForce = 8f;
 
-    InputAction  PogoAttack;
     private Rigidbody2D playerRb;
+    private InputAction PogoAttack;
+
+    // Offsets
+    public float attackDistance = 1f; // distance from player
+    private Vector2 attackOffsetFront = new Vector2(1f, 0f); // in front
+    private Vector2 attackOffsetUnder = new Vector2(0f, -1f); // under
 
     private void Start()
     {
         playerRb = GetComponent<Rigidbody2D>();
+        PogoAttack = InputSystem.actions.FindAction("PogoAttack");
+    }
+
+    private void Update()
+    {
+        // Default to front
+        pogoAttackPoint.localPosition = attackOffsetFront * attackDistance;
+
+        // Switch to under if falling
+        if (playerRb.linearVelocity.y < -0.1f)
+        {
+            pogoAttackPoint.localPosition = attackOffsetUnder * attackDistance;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("Collision with"+ collision.gameObject.name);
-         if (((1 << collision.gameObject.layer) & enemyLayers) != 0)
+        Debug.Log("Collision with" + collision.gameObject.name);
+        if (((1 << collision.gameObject.layer) & enemies) != 0)
         {
             Debug.Log("Enemy layer detected");
             if (playerRb.linearVelocity.y <= 0)
             {
-                Collider2D[] hitEnemeies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
-                Debug.Log("Hit enemies count:"+ hitEnemeies.Length);
-                foreach (Collider2D enemy in hitEnemeies)
+                Collider2D[] hitEnemies = AttackUtilities.DetectEnemies(pogoAttackPoint.position, pogoAttackRange, enemies);
+                Debug.Log("Hit enemies count:" + hitEnemies.Length);
+                foreach (Collider2D enemy in hitEnemies)
                 {
-                    Debug.Log("pogo hit"+ enemy.name); ;
+                    Debug.Log("pogo hit" + enemy.name);
                     var enemyPatrol = enemy.GetComponent<EnemyPatrol>();
-                    if(enemyPatrol != null)
+                    if (enemyPatrol != null)
                     {
                         enemyPatrol.TakeDamage(damageAmount);
                     }
@@ -43,13 +60,13 @@ public class PlayerPogo : MonoBehaviour
             Debug.Log("bounce Applied");
         }
     }
+
     private void OnDrawGizmosSelected()
     {
-        if (attackPoint == null)
+        if (pogoAttackPoint == null)
             return;
 
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        Gizmos.DrawWireSphere(pogoAttackPoint.position, pogoAttackRange);
     }
-
 }

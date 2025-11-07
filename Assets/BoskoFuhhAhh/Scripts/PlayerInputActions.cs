@@ -1,8 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Playables;
-
 
 public class PlayerInputActions : MonoBehaviour
 {
@@ -10,18 +8,31 @@ public class PlayerInputActions : MonoBehaviour
     public float attackRange = 0.5f;
     public LayerMask enemyLayers;
     [SerializeField] int damageAmount;
-   
+
     InputAction parryAction;
     private InputAction attackAction;
     private bool isParrying = false;
 
+    [SerializeField] float jumpForce = 7f;
+
+
     private PlayerController pc;
 
     [SerializeField] float parryWindowDuration = 0.5f;
-        void Start()
+
+    // Offsets for attack point positions
+    public float attackDistance = 1f;
+    private Vector2 attackOffsetFront = new Vector2(1f, 0f);
+    private Vector2 attackOffsetUnder = new Vector2(0f, -1f);
+
+    private Rigidbody2D playerRb;
+
+    private void Start()
     {
         parryAction = InputSystem.actions.FindAction("Parry");
+        playerRb = GetComponent<Rigidbody2D>(); 
     }
+
     private void Awake()
     {
         pc = FindAnyObjectByType<PlayerController>();
@@ -33,7 +44,7 @@ public class PlayerInputActions : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Attack not found u DWEEB");
+            Debug.LogError("Attack not found");
         }
         parryAction = InputSystem.actions.FindAction("Parry");
     }
@@ -50,21 +61,36 @@ public class PlayerInputActions : MonoBehaviour
         attackAction?.Disable();
         if (parryAction != null)
             parryAction.Disable();
-           
     }
 
     private void Update()
     {
+     
+        if (playerRb != null && attackPoint != null)
+        {
+            if (playerRb.linearVelocity.y < -0.1f)
+            {
+                
+                attackPoint.localPosition = attackOffsetUnder * attackDistance;
+               
+               
+            }
+            else
+            {
+                
+                attackPoint.localPosition = attackOffsetFront * attackDistance;
+            }
+        }
+
         if (parryAction != null && parryAction.WasPerformedThisFrame())
         {
             StartCoroutine(ParryRoutine());
         }
     }
 
-
     private void Attack()
     {
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+        Collider2D[] hitEnemies = AttackUtilities.DetectEnemies(attackPoint.position, attackRange, enemyLayers);
         foreach (Collider2D enemy in hitEnemies)
         {
             Debug.Log("We hit " + enemy.name);
@@ -78,61 +104,34 @@ public class PlayerInputActions : MonoBehaviour
         if (pc != null)
         {
             pc.playerState = "parryState";
-            
         }
-        //67
         Debug.Log("PARRRRRRY");
 
-        float timer = 0f; 
+        float timer = 0f;
         while (timer < parryWindowDuration)
         {
             timer += Time.deltaTime;
             yield return null;
         }
-           isParrying = false;
+        isParrying = false;
 
-        if(pc != null)
+        if (pc != null)
         {
             pc.playerState = "Normal";
         }
-
         Debug.Log("No Parry");
-        
     }
-
 
     public void OnEnemyAttackHit()
     {
         if (isParrying)
         {
             Debug.Log("Bra Parry");
-        }else
-        {
-            Debug.Log("´Player hit");
         }
-    }
-
-
-
-
-    //IEnumerator Parry()
-    //{
-
-    //    FindAnyObjectByType<PlayerController>().playerState = "Parry";
-        
-        
-    //    yield return new WaitForSeconds(0.3f);
-
-
-    //    FindAnyObjectByType<PlayerController>().playerState = "Normal";
-
-    //}
-
-    void ReadPlayerInputs()
-    {
-
-        
-        
+        else
+        {
+            Debug.Log("Player hit");
+        }
     }
 
     private void OnDrawGizmosSelected()
