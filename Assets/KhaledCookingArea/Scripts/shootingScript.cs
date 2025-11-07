@@ -7,6 +7,8 @@ public class shootingScript : MonoBehaviour
     [SerializeField] GameObject DeflectiveBombaclat;
     [SerializeField] float Enemyposition;
 
+    [SerializeField] bool canShoot = false;
+
     
     void Start()
     {
