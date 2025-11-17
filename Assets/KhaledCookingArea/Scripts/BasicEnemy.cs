@@ -52,8 +52,8 @@ public class BasicEnemy : MonoBehaviour
     private void Start()
     {
         alive = transform.Find("Alive").gameObject;
-        aliveRb = GetComponent<Rigidbody2D>();
-        aliveAnim = GetComponent<Animator>();
+        aliveRb = GetComponentInChildren<Rigidbody2D>();
+        aliveAnim = GetComponentInChildren<Animator>();
 
         facingDirection = 1;
     }
@@ -62,9 +62,7 @@ public class BasicEnemy : MonoBehaviour
     {
         switch (currentState) 
         {
-            case State.Walking:
-                UpdateWalkingState();
-                break;
+          
 
             case State.Knockback:
                 UpdateKnockbackState();
@@ -72,6 +70,18 @@ public class BasicEnemy : MonoBehaviour
             case State.Dead:
                 UpdateDeadState();
                 break;
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        switch (currentState)
+        {
+            case State.Walking:
+                UpdateWalkingState();
+                break;
+
+          
         }
     }
 
