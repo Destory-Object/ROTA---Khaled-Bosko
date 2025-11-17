@@ -21,14 +21,26 @@ public class PlayerDamageReceiver : MonoBehaviour
         playerCurrentHealth = playerMaxHealth;
     }
 
-
-    private void Update()
+    public void TakeDamage(int damage)
     {
-        if(playerCurrentHealth  <= 0)
+        playerCurrentHealth -= damage;
+        Debug.Log("Player took damage, current health: " + playerCurrentHealth);
+        if (playerCurrentHealth <= 0)
         {
             Die();
         }
     }
+
+
+
+
+    //private void Update()
+    //{
+    //    if(playerCurrentHealth  <= 0)
+    //    {
+    //        Die();
+    //    }
+    //}
 
     private void Die()
     {

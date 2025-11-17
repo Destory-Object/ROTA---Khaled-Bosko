@@ -63,6 +63,11 @@ public class PlayerInputActions : MonoBehaviour
             parryAction.Disable();
     }
 
+    public bool IsParrying()
+    {
+        return isParrying;
+    }
+
     private void Update()
     {
      
@@ -73,12 +78,12 @@ public class PlayerInputActions : MonoBehaviour
                 
                 attackPoint.localPosition = attackOffsetUnder * attackDistance;
                
-               
             }
             else
             {
                 
                 attackPoint.localPosition = attackOffsetFront * attackDistance;
+
             }
         }
 
@@ -95,6 +100,8 @@ public class PlayerInputActions : MonoBehaviour
         {
             Debug.Log("We hit " + enemy.name);
             enemy.GetComponent<EnemyPatrol>().TakeDamage(damageAmount);
+
+            enemy.GetComponent<EnemyPatrol>().TakeDamage(damageAmount);
         }
     }
 
@@ -106,6 +113,7 @@ public class PlayerInputActions : MonoBehaviour
             pc.playerState = "parryState";
         }
         Debug.Log("PARRRRRRY");
+        yield return null;
 
         float timer = 0f;
         while (timer < parryWindowDuration)
@@ -114,12 +122,14 @@ public class PlayerInputActions : MonoBehaviour
             yield return null;
         }
         isParrying = false;
+        yield return null;
 
         if (pc != null)
         {
             pc.playerState = "Normal";
         }
         Debug.Log("No Parry");
+        yield return null;
     }
 
     public void OnEnemyAttackHit()

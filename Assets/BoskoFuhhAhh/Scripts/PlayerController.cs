@@ -39,8 +39,12 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] public string playerState;
 
+    private PlayerInputActions inputActions;
+
     void Start()
     {
+        inputActions = GetComponent<PlayerInputActions>();
+
         moveAction = InputSystem.actions.FindAction("Move");
         jumpAction = InputSystem.actions.FindAction("Jump");
         dashAction = InputSystem.actions.FindAction("Dash");
@@ -75,8 +79,21 @@ public class PlayerController : MonoBehaviour
 
                 break;
         }
+
+        if (playerState == "parryState" || inputActions.IsParrying())
+        {
+            // disable movement or do specific parry logic
+            return; 
+        }
     }
     private void FixedUpdate() {
+
+        if (playerState == "parryState" || inputActions.IsParrying())
+        {
+            // Do not move or handle movement during parry
+            return;
+        }
+
 
         if (moveVector.x > 0.01f)
         {
@@ -128,6 +145,9 @@ public class PlayerController : MonoBehaviour
     }
     void ReadPlayerInputs()
     {
+        if (playerState == "parryState" || inputActions.IsParrying())
+            return;
+
         moveVector = moveAction.ReadValue<Vector2>().normalized;
 
         if(jumpAction.WasPerformedThisFrame() && isGrounded && playerState == "Normal")
