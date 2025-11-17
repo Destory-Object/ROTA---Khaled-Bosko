@@ -7,16 +7,23 @@ public class PlayerPogo : MonoBehaviour
     public float pogoAttackRange = 0.5f;
     public LayerMask enemies;
     [SerializeField] int damageAmount;
-    private float bounceForce = 8f;
+    [SerializeField] float bounceForce = 8f;
 
     private Rigidbody2D playerRb;
     private InputAction PogoAttack;
+
+    private PlayerController pc;
 
     // Offsets
     public float attackDistance = 1f; // distance from player
     private Vector2 attackOffsetFront = new Vector2(1f, 0f); // in front
     private Vector2 attackOffsetUnder = new Vector2(0f, -1f); // under
 
+
+    private void Awake()
+    {
+        pc = FindAnyObjectByType<PlayerController>();
+    }
     private void Start()
     {
         playerRb = GetComponent<Rigidbody2D>();
@@ -33,31 +40,37 @@ public class PlayerPogo : MonoBehaviour
         {
             pogoAttackPoint.localPosition = attackOffsetUnder * attackDistance;
         }
+
+        if (PogoAttack.WasPressedThisFrame())
+            TestPogo();
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    void TestPogo()
     {
-        Debug.Log("Collision with" + collision.gameObject.name);
-        if (((1 << collision.gameObject.layer) & enemies) != 0)
+        Collider2D[] hitEnemies = AttackUtilities.DetectEnemies(pogoAttackPoint.position, pogoAttackRange, enemies);
+        if (hitEnemies.Length > 0)
         {
             Debug.Log("Enemy layer detected");
-            if (playerRb.linearVelocity.y <= 0)
+            Debug.Log("Hit enemies count:" + hitEnemies.Length);
+            foreach (Collider2D enemies in hitEnemies)
             {
-                Collider2D[] hitEnemies = AttackUtilities.DetectEnemies(pogoAttackPoint.position, pogoAttackRange, enemies);
-                Debug.Log("Hit enemies count:" + hitEnemies.Length);
-                foreach (Collider2D enemy in hitEnemies)
+                Debug.Log("Collision with" + enemies.gameObject.name);
+                if (playerRb.linearVelocity.y <= 0)
                 {
-                    Debug.Log("pogo hit" + enemy.name);
-                    var enemyPatrol = enemy.GetComponent<EnemyPatrol>();
+                    Debug.Log("pogo hit" + enemies.name);
+                    var enemyPatrol = enemies.GetComponent<EnemyPatrol>();
                     if (enemyPatrol != null)
                     {
                         enemyPatrol.TakeDamage(damageAmount);
+                        //playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, bounceForce);
+                        playerRb.AddForceY(bounceForce, ForceMode2D.Impulse);
+                        Debug.Log("bounce Applied");
                     }
                 }
-            }
 
-            playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, bounceForce);
-            Debug.Log("bounce Applied");
+                //playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, bounceForce);
+                //Debug.Log("bounce Applied");
+            }
         }
     }
 

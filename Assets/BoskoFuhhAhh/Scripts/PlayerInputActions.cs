@@ -63,6 +63,11 @@ public class PlayerInputActions : MonoBehaviour
             parryAction.Disable();
     }
 
+    public bool IsParrying()
+    {
+        return isParrying;
+    }
+
     private void Update()
     {
      
@@ -73,12 +78,12 @@ public class PlayerInputActions : MonoBehaviour
                 
                 attackPoint.localPosition = attackOffsetUnder * attackDistance;
                
-               
             }
             else
             {
                 
                 attackPoint.localPosition = attackOffsetFront * attackDistance;
+
             }
         }
 
