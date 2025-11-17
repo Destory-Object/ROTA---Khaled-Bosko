@@ -807,7 +807,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1111219982}
   - component: {fileID: 1111219981}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: EnemyAttackZone
   m_TagString: Untagged
   m_Icon: {fileID: 4422084297763085224, guid: 0000000000000000d000000000000000, type: 0}
@@ -1170,9 +1170,9 @@ GameObject:
   - component: {fileID: 1583235796}
   - component: {fileID: 1583235795}
   - component: {fileID: 1583235794}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Enemy(Real)
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1190,6 +1190,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyController
   attackZone: {fileID: 1111219980}
+  attackDuration: 0.5
+  attackCooldown: 0.2
 --- !u!212 &1583235795
 SpriteRenderer:
   m_ObjectHideFlags: 0
