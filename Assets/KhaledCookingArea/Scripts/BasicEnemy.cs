@@ -93,6 +93,7 @@ public class BasicEnemy : MonoBehaviour
         }
         else
         {
+            Debug.Log("går");
             movement.Set(movementSpeed * facingDirection, aliveRb.linearVelocityY);
             aliveRb.linearVelocity = movement;
         }
@@ -111,12 +112,15 @@ public class BasicEnemy : MonoBehaviour
         movement.Set(knockbackSpeed.x * damageDirection, knockbackSpeed.y);
         aliveRb.linearVelocity = movement;
         aliveAnim.SetBool("Knockback", true);
+
+        Debug.Log("entered knockback state");
     }
     
     private void UpdateKnockbackState()
     {
         if (Time.time > KnockbackStartTime + knockbackDuration)
         {
+            Debug.Log("Should be walking");
             SwitchState(State.Walking);
         }
     }
