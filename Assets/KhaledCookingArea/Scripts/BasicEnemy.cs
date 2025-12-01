@@ -62,8 +62,6 @@ public class BasicEnemy : MonoBehaviour
     {
         switch (currentState) 
         {
-          
-
             case State.Knockback:
                 UpdateKnockbackState();
                 break;
