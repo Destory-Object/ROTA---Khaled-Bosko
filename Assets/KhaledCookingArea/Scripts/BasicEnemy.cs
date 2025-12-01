@@ -31,7 +31,7 @@ public class BasicEnemy : MonoBehaviour
     [SerializeField]
     private Vector2 knockbackSpeed;
 
-    private float 
+    [SerializeField] float 
         currentHealth,
         KnockbackStartTime;
 
@@ -54,6 +54,8 @@ public class BasicEnemy : MonoBehaviour
         alive = transform.Find("Alive").gameObject;
         aliveRb = GetComponentInChildren<Rigidbody2D>();
         aliveAnim = GetComponentInChildren<Animator>();
+
+        currentHealth = maxHealth;
 
         facingDirection = 1;
     }

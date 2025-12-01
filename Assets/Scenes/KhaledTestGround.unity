@@ -1023,7 +1023,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BasicEnemy
   groundcheckDistance: 0.5
   wallcheckDistance: 0.1
-  movementSpeed: 10
+  movementSpeed: 4
   maxHealth: 300
   knockbackDuration: 0.1
   groundcheck: {fileID: 442062949}
@@ -1032,6 +1032,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   knockbackSpeed: {x: 10, y: 5}
+  currentHealth: 1
+  KnockbackStartTime: 0
 --- !u!4 &1879667033
 Transform:
   m_ObjectHideFlags: 0
