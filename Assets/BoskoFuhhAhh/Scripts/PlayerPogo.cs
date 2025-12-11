@@ -15,14 +15,16 @@ public class PlayerPogo : MonoBehaviour
     private PlayerController pc;
 
     // Offsets
-    public float attackDistance = 1f; // distance from player
+    public float attackDistance = 1f;
     private Vector2 attackOffsetFront = new Vector2(1f, 0f); // in front
     private Vector2 attackOffsetUnder = new Vector2(0f, -1f); // under
 
+    Animator anim;
 
     private void Awake()
     {
         pc = FindAnyObjectByType<PlayerController>();
+        //  anim = GetComponent<Animator>();
     }
     private void Start()
     {
@@ -32,10 +34,10 @@ public class PlayerPogo : MonoBehaviour
 
     private void Update()
     {
-        // Default to front
+
         pogoAttackPoint.localPosition = attackOffsetFront * attackDistance;
 
-        // Switch to under if falling
+
         if (playerRb.linearVelocity.y < -0.1f)
         {
             pogoAttackPoint.localPosition = attackOffsetUnder * attackDistance;
@@ -61,7 +63,9 @@ public class PlayerPogo : MonoBehaviour
                     var enemyPatrol = enemies.GetComponent<EnemyPatrol>();
                     if (enemyPatrol != null)
                     {
+                        //anim = enemyPatrol.gameObject.GetComponent<Animator>();
                         enemyPatrol.TakeDamage(damageAmount);
+                        //anim.SetTrigger("Damage");  //Fixa här
                         //playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, bounceForce);
                         playerRb.AddForceY(bounceForce, ForceMode2D.Impulse);
                         Debug.Log("bounce Applied");

@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerInputActions : MonoBehaviour
+public class PlayerInputActions : MonoBehaviour, IContract
 {
     public Transform attackPoint;
     public float attackRange = 0.5f;
@@ -26,6 +26,8 @@ public class PlayerInputActions : MonoBehaviour
     private Vector2 attackOffsetUnder = new Vector2(0f, -1f);
 
     private Rigidbody2D playerRb;
+
+    Animator ani;
 
     private void Start()
     {
@@ -93,6 +95,11 @@ public class PlayerInputActions : MonoBehaviour
         }
     }
 
+
+    public void ExecuteAction()
+    {
+        
+    }
     private void Attack()
     {
         Collider2D[] hitEnemies = AttackUtilities.DetectEnemies(attackPoint.position, attackRange, enemyLayers);
@@ -101,7 +108,10 @@ public class PlayerInputActions : MonoBehaviour
             Debug.Log("We hit " + enemy.name);
             enemy.GetComponent<EnemyPatrol>().TakeDamage(damageAmount);
 
+            ani = enemy.gameObject.GetComponent<Animator>();
             enemy.GetComponent<EnemyPatrol>().TakeDamage(damageAmount);
+
+
         }
     }
 
