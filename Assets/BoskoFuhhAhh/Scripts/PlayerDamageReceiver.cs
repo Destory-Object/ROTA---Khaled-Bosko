@@ -2,11 +2,12 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class PlayerDamageReceiver : MonoBehaviour
+public class PlayerDamageReceiver : MonoBehaviour, IHealth
 {
 
     [SerializeField] int playerMaxHealth;
     [SerializeField] int playerCurrentHealth;
+    [SerializeField] bool canTakeDamage = true;
 
     private PlayerInputActions inputActions;
 
@@ -23,11 +24,14 @@ public class PlayerDamageReceiver : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        playerCurrentHealth -= damage;
-        Debug.Log("Player took damage, current health: " + playerCurrentHealth);
-        if (playerCurrentHealth <= 0)
+        if (canTakeDamage)
         {
-            Die();
+            playerCurrentHealth -= damage;
+            Debug.Log("Player took damage, current health: " + playerCurrentHealth);
+            if (playerCurrentHealth <= 0)
+            {
+                Die();
+            }
         }
     }
 
@@ -42,6 +46,14 @@ public class PlayerDamageReceiver : MonoBehaviour
     //    }
     //}
 
+    public void SwitchDamageRecieve(bool? active)
+    {
+        if (active != null)
+            canTakeDamage = (bool)active;
+        else
+            canTakeDamage = !canTakeDamage;
+    }
+
     private void Die()
     {
         GetComponent<Collider2D>().enabled = false;
@@ -53,6 +65,21 @@ public class PlayerDamageReceiver : MonoBehaviour
         {
             inputActions.OnEnemyAttackHit();
         }
+    }
+
+    public void RegenHealth(int amount)
+    {
+        playerCurrentHealth += Mathf.Max(0, amount);
+    }
+
+    public int GetHealth()
+    {
+        return playerCurrentHealth;
+    }
+
+    public void Kill()
+    {
+        Debug.LogWarning("Player should not be killed");
     }
 }
 

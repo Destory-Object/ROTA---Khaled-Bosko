@@ -83,7 +83,12 @@ public class PlayerController : MonoBehaviour
         if (playerState == "parryState" || inputActions.IsParrying())
         {
             // disable movement or do specific parry logic
-            return; 
+            GetComponent<PlayerDamageReceiver>().SwitchDamageRecieve(false);
+            return;
+        }
+        else
+        {
+            GetComponent<PlayerDamageReceiver>().SwitchDamageRecieve(true);
         }
     }
     private void FixedUpdate() {
@@ -91,7 +96,11 @@ public class PlayerController : MonoBehaviour
         if (playerState == "parryState" || inputActions.IsParrying())
         {
             // Do not move or handle movement during parry
+            GetComponent<PlayerDamageReceiver>().SwitchDamageRecieve(false);
             return;
+        }else
+        {
+            GetComponent<PlayerDamageReceiver>().SwitchDamageRecieve(true);
         }
 
 
