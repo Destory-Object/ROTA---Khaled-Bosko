@@ -41,10 +41,10 @@ public class PlayerPogo : MonoBehaviour
         if (playerRb.linearVelocity.y < -0.1f)
         {
             pogoAttackPoint.localPosition = attackOffsetUnder * attackDistance;
-        }
 
-        if (PogoAttack.WasPressedThisFrame())
-            TestPogo();
+            if (PogoAttack.WasPressedThisFrame())
+                TestPogo();
+        }
     }
 
     void TestPogo()
