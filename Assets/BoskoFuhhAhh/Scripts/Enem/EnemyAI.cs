@@ -8,7 +8,7 @@ public class EnemyAI : MonoBehaviour
     public float attackCooldown = 1.5f;    
     public int damageAmount = 10;           
 
-    public Animator animator;                
+    //public Animator animator;                
     public PlayerDamageReceiver playerDamageReceiver; 
 
     private float lastAttackTime;
@@ -31,11 +31,11 @@ public class EnemyAI : MonoBehaviour
 
     void MoveTowardsPlayer()
     {
-        if (animator != null)
-        {
-            animator.SetBool("isMoving", true);
-            animator.SetTrigger("Walk");
-        }
+        //if (animator != null)
+        //{
+        //    animator.SetBool("isMoving", true);
+        //    animator.SetTrigger("Walk");
+        //}
 
         Vector3 direction = (player.position - transform.position).normalized;
         transform.position += direction * moveSpeed * Time.deltaTime;
@@ -48,11 +48,11 @@ public class EnemyAI : MonoBehaviour
 
     void Attack()
     {
-        if (animator != null)
-        {
-            animator.SetBool("isMoving", false);
-            animator.SetTrigger("Attack");
-        }
+        //if (animator != null)
+        //{
+        //    animator.SetBool("isMoving", false);
+        //    animator.SetTrigger("Attack");
+        //}
 
         if (Time.time - lastAttackTime >= attackCooldown)
         {
