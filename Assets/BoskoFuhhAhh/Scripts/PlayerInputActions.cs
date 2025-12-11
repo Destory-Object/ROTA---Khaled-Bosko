@@ -106,12 +106,11 @@ public class PlayerInputActions : MonoBehaviour, IContract
         foreach (Collider2D enemy in hitEnemies)
         {
             Debug.Log("We hit " + enemy.name);
-            enemy.GetComponent<EnemyPatrol>().TakeDamage(damageAmount);
+            IHealth healthComp = enemy.GetComponent<IHealth>();
+            if (healthComp != null)
+                healthComp.TakeDamage(damageAmount);
 
             ani = enemy.gameObject.GetComponent<Animator>();
-            enemy.GetComponent<EnemyPatrol>().TakeDamage(damageAmount);
-
-
         }
     }
 
