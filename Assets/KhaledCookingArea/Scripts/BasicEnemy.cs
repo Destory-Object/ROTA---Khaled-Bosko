@@ -150,7 +150,8 @@ public class BasicEnemy : MonoBehaviour, IHealth
     
     private void UpdateDeadState()
     {
-
+        if (currentHealth <= 0)
+            SwitchState(State.Dead);
     }
 
     private void ExitDeadState()
@@ -179,7 +180,7 @@ public class BasicEnemy : MonoBehaviour, IHealth
         {
             SwitchState(State.Knockback);
         }
-        else if(currentHealth < 0.0f)
+        else if(currentHealth <= 0.0f)
         {
             SwitchState(State.Dead);
         }
@@ -245,6 +246,9 @@ public class BasicEnemy : MonoBehaviour, IHealth
     public void TakeDamage(int amount)
     {
         currentHealth -= Mathf.Max(0, amount);
+
+        if (currentHealth <= 0)
+            SwitchState(State.Dead);
     }
     public int GetHealth()
     {
