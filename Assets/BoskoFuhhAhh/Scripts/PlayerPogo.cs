@@ -60,11 +60,14 @@ public class PlayerPogo : MonoBehaviour
                 if (playerRb.linearVelocity.y <= 0)
                 {
                     Debug.Log("pogo hit" + enemies.name);
-                    var enemyPatrol = enemies.GetComponent<EnemyPatrol>();
-                    if (enemyPatrol != null)
+                    //var enemyPatrol = enemies.GetComponent<EnemyPatrol>();
+
+                    IHealth enemyHealth = enemies.GetComponent<IHealth>();
+
+                    if (enemyHealth != null)
                     {
                         //anim = enemyPatrol.gameObject.GetComponent<Animator>();
-                        enemyPatrol.TakeDamage(damageAmount);
+                        enemyHealth.TakeDamage(damageAmount);
                         //anim.SetTrigger("Damage");  //Fixa här
                         //playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, bounceForce);
                         playerRb.AddForceY(bounceForce, ForceMode2D.Impulse);

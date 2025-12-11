@@ -473,10 +473,10 @@
                 {
                     "name": "",
                     "id": "1a186353-2467-4bed-bbf5-e96de5e712b6",
-                    "path": "<Mouse>/press",
+                    "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Keyboard&Mouse",
                     "action": "PogoAttack",
                     "isComposite": false,
                     "isPartOfComposite": false
