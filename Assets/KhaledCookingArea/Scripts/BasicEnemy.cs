@@ -1,7 +1,7 @@
 using System.Xml.Serialization;
 using UnityEngine;
 
-public class BasicEnemy : MonoBehaviour
+public class BasicEnemy : MonoBehaviour, IHealth
 {
     private enum State
     {
@@ -86,7 +86,7 @@ public class BasicEnemy : MonoBehaviour
     }
 
     //---WalkingState------------------------------------------------------------------------
-
+    #region WalkingState
     private void EnterWalkingState()
     {
 
@@ -113,9 +113,9 @@ public class BasicEnemy : MonoBehaviour
     {
 
     }
-    
+    #endregion
     //---KnockbackState------------------------------------------------------------------------
-
+    #region KnockbackState
     private void EnterKnockbackState()
     {
         KnockbackStartTime = Time.time;
@@ -139,9 +139,9 @@ public class BasicEnemy : MonoBehaviour
     {
         aliveAnim.SetBool("Knockback", false);
     }
-
+    #endregion
     //---DeadState------------------------------------------------------------------------
-
+    #region DeadState
     private void EnterDeadState()
     {
         //spwan chunks and blood 
@@ -157,9 +157,9 @@ public class BasicEnemy : MonoBehaviour
     {
 
     }
-
+    #endregion
     //---OtherFunctions------------------------------------------------------------------------
-
+    #region OtherFunctions
     private void Damage(float[] attackDetails)
     {
         currentHealth -= attackDetails[0];
@@ -235,5 +235,24 @@ public class BasicEnemy : MonoBehaviour
         Gizmos.DrawLine(wallcheck.position, new Vector2(wallcheck.position.x + wallcheckDistance, wallcheck.position.y));
         
     }
-
+    #endregion
+    //---IHealth------------------------------------------------------------------------
+    #region IHealth
+    public void RegenHealth(int amount)
+    {
+        currentHealth += Mathf.Max(0, amount);
+    }
+    public void TakeDamage(int amount)
+    {
+        currentHealth -= Mathf.Max(0, amount);
+    }
+    public int GetHealth()
+    {
+        return Mathf.RoundToInt(currentHealth);
+    }
+    public void Kill()
+    {
+        EnterDeadState();
+    }
+    #endregion
 }
