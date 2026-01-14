@@ -13,7 +13,7 @@ public class PlayerInputActions : MonoBehaviour, IContract
     private InputAction attackAction;
     private bool isParrying = false;
 
-    [SerializeField] float jumpForce = 7f;
+    [SerializeField] float jumpForce;
 
 
     private PlayerController pc;
@@ -130,7 +130,6 @@ public class PlayerInputActions : MonoBehaviour, IContract
             timer += Time.deltaTime;
             yield return null;
         }
-        isParrying = false;
         yield return null;
 
         if (pc != null)
@@ -138,6 +137,7 @@ public class PlayerInputActions : MonoBehaviour, IContract
             pc.playerState = "Normal";
         }
         Debug.Log("No Parry");
+        isParrying = false;
         yield return null;
     }
 

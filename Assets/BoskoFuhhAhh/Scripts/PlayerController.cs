@@ -5,9 +5,9 @@ using UnityEngine.Rendering;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] float moveSpeed = 10f;
+    [SerializeField] float moveSpeed;
 
-    [SerializeField] float jumpForce = 7f;
+    [SerializeField] float jumpForce;
    
     [Header("Grounded Info")]
     [SerializeField] float groundCheckRadius = 0.2f;
@@ -19,11 +19,11 @@ public class PlayerController : MonoBehaviour
     [Header("Coyote Info")]
     [SerializeField] float CoyoteTime = 0.2f;
     private float coyoteTimer = 0.0f;
-    
+
     [Header("Dash Info")]
-    [SerializeField] float dashSpeed = 20.0f;
-    [SerializeField] float dashDuration = 0.5f;
-     bool isDashing = false;
+    [SerializeField] float dashSpeed;
+    [SerializeField] float dashDuration;
+    // bool isDashing = false;
 
 
     [Header("Input Actions")]
