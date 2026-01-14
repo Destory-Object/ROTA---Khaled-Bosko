@@ -30,20 +30,24 @@ public class EnemyClass : MonoBehaviour
     private void Awake()
     {
         //om det kommer problem flytta detta till void Start
-        whatIsGround =  LayerMask.GetMask(new string[] { "Default" });
+        whatIsGround =  LayerMask.GetMask(new string[] { "ground" });
     }
 
     private void Start()
     {
         // Toggle the state to idle if not already set
-        if (currentState == State.None) currentState = State.Idle;
+        //if (currentState == State.None) currentState = State.Idle;
 
         // Get the rigidbody of the enemy if not set
         if (aliveRb == null) aliveRb = GetComponent<Rigidbody2D>();
 
         // Set the max health of the enemy if not set
         if (maxHealth <= 0) maxHealth = 1;
-    }
+
+    
+
+        
+}
 
     public virtual void Movement() { throw new System.Exception("Movement needs to be declared on this enemy"); }
     // Movement is declared in each enemy using this script as body (Inherit)
