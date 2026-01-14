@@ -110,6 +110,7 @@ public class PlayerInputActions : MonoBehaviour, IContract
             if (healthComp != null)
                 healthComp.TakeDamage(damageAmount);
 
+
             ani = enemy.gameObject.GetComponent<Animator>();
         }
     }
