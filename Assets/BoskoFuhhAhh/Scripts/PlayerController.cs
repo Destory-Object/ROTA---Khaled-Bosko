@@ -100,7 +100,7 @@ public class PlayerController : MonoBehaviour
             return;
         }else
         {
-            GetComponent<PlayerDamageReceiver>().SwitchDamageRecieve(true);
+            GetComponent<PlayerDamageReceiver>().SwitchDamageRecieve(true); 
         }
 
 
