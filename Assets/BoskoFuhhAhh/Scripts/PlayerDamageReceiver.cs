@@ -5,8 +5,8 @@ using UnityEngine.Rendering;
 public class PlayerDamageReceiver : MonoBehaviour, IHealth
 {
 
-    [SerializeField] int playerMaxHealth;
-    [SerializeField] int playerCurrentHealth;
+    public int playerMaxHealth;
+    public int playerCurrentHealth;
     [SerializeField] bool canTakeDamage = true;
 
     private PlayerInputActions inputActions;

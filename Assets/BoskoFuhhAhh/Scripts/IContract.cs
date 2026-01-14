@@ -15,3 +15,8 @@ public interface IHealth
     public int GetHealth();
     public void Kill();
 }
+
+public interface HealthPickUp
+{
+    public int GetHealth();
+}

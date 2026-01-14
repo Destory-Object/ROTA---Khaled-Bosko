@@ -49,7 +49,7 @@ public class PlayerPogo : MonoBehaviour
 
     void TestPogo()
     {
-        Collider2D[] hitEnemies = AttackUtilities.DetectEnemies(pogoAttackPoint.position, pogoAttackRange, enemies);
+        Collider2D[] hitEnemies = AttackUtilities.DetectEnemies(pogoAttackPoint.position, pogoAttackRange, enemies);    
         if (hitEnemies.Length > 0)
         {
             Debug.Log("Enemy layer detected");
