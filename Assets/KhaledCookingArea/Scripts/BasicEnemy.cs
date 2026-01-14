@@ -51,9 +51,9 @@ public class BasicEnemy : MonoBehaviour, IHealth
 
     private void Start()
     {
-        alive = transform.Find("Alive").gameObject;
-        aliveRb = GetComponentInChildren<Rigidbody2D>();
-        aliveAnim = GetComponentInChildren<Animator>();
+        alive = transform.GetChild(0).gameObject;
+        aliveRb = alive.GetComponent<Rigidbody2D>();
+        aliveAnim = alive.GetComponent<Animator>();
 
         currentHealth = maxHealth;
 
