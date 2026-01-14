@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
@@ -14,17 +15,23 @@ public class EnemyClass : MonoBehaviour
 {
     [Header("Enemy Config")]
     [SerializeField] public State currentState = State.None; // Current state of enemy
-    [SerializeField] public float maxHealth     = 0; // The max health any enemy can have
-    [SerializeField] public float damage        = 0; // The damage any enemy can do
+    [SerializeField] public float maxHealth = 0; // The max health any enemy can have
+    [SerializeField] public float damage = 0; // The damage any enemy can do
     [SerializeField] public float movementSpeed = 0; // How fast each enemy is
     [SerializeField] public Rigidbody2D aliveRb; // The rigidbody of each enemy
 
     [Header("Enemy Layers")]
     // What is declared as ground in the scene
-    [SerializeField] public LayerMask whatIsGround = LayerMask.GetMask(new string[] { "Default" });
+    [SerializeField] public LayerMask whatIsGround;
 
     [Header("Runtime")]
     [SerializeField] public float currentHealth = 0; // The current health each enemy has
+
+    private void Awake()
+    {
+        //om det kommer problem flytta detta till void Start
+        whatIsGround =  LayerMask.GetMask(new string[] { "Default" });
+    }
 
     private void Start()
     {
