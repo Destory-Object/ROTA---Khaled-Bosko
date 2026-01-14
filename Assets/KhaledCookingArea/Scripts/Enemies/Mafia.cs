@@ -44,10 +44,10 @@ public class Mafia : EnemyClass
         switch (currentState)
         {
             case State.Knockback:
-                UpdateKnockbackState();
+               // UpdateKnockbackState();
                 break;
             case State.Dead:
-                UpdateDeadState();
+               // UpdateDeadState();
                 break;
         }
     }
