@@ -9,6 +9,7 @@ public class PlayerInputActions : MonoBehaviour, IContract
     public LayerMask enemyLayers;
     [SerializeField] int damageAmount;
 
+
     InputAction parryAction;
     private InputAction attackAction;
     private bool isParrying = false;
@@ -18,7 +19,7 @@ public class PlayerInputActions : MonoBehaviour, IContract
 
     private PlayerController pc;
 
-    [SerializeField] float parryWindowDuration = 0.5f;
+    [SerializeField] float parryWindowDuration = 0.1f;
 
     // Offsets for attack point positions
     public float attackDistance = 1f;
@@ -109,9 +110,9 @@ public class PlayerInputActions : MonoBehaviour, IContract
             IHealth healthComp = enemy.GetComponent<IHealth>();
             if (healthComp != null)
                 healthComp.TakeDamage(damageAmount);
+           
 
-
-            ani = enemy.gameObject.GetComponent<Animator>();
+          
         }
     }
 

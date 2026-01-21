@@ -40,11 +40,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] public string playerState;
 
     private PlayerInputActions inputActions;
+    private InputAction scanAction;
 
     void Start()
     {
         inputActions = GetComponent<PlayerInputActions>();
 
+        scanAction = InputSystem.actions.FindAction("Interact");
         moveAction = InputSystem.actions.FindAction("Move");
         jumpAction = InputSystem.actions.FindAction("Jump");
         dashAction = InputSystem.actions.FindAction("Dash");
@@ -74,7 +76,12 @@ public class PlayerController : MonoBehaviour
                 ReadPlayerInputs();
                 break;
 
-            case "parryState":
+            case "parryState":                                      
+                ReadPlayerInputs();
+
+                break;
+            
+            case "Scaning":
                 ReadPlayerInputs();
 
                 break;
@@ -132,6 +139,12 @@ public class PlayerController : MonoBehaviour
                 NormalMovement();
 
                 break;
+
+            case "Scaning":
+                PlayerIsScaning();
+
+                break;
+                
         }
     }
     void NormalMovement()
@@ -151,6 +164,11 @@ public class PlayerController : MonoBehaviour
         //playerRb.linearVelocity = currentVelocity;
 
        playerRb.linearVelocityX = moveVector.x * dashSpeed;
+    }
+    void PlayerIsScaning()
+    {
+        playerRb.linearVelocityX = 0;
+       
     }
     void ReadPlayerInputs()
     {
@@ -178,6 +196,12 @@ public class PlayerController : MonoBehaviour
         {
             playerState = "Normal";
         }
+
+        if (scanAction.WasPerformedThisFrame() && playerState == "Normal")
+        {
+            playerState = "Scaning";
+        }
+        
     }
     private void HandleCoyoteTime()
     {

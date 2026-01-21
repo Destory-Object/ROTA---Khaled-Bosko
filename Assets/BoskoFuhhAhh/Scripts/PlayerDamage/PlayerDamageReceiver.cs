@@ -10,6 +10,7 @@ public class PlayerDamageReceiver : MonoBehaviour, IHealth
     [SerializeField] bool canTakeDamage = true;
 
     private PlayerInputActions inputActions;
+    Animator ani;
 
     private void Start()
     {
@@ -20,6 +21,8 @@ public class PlayerDamageReceiver : MonoBehaviour, IHealth
         }
         
         playerCurrentHealth = playerMaxHealth;
+
+        ani = FindAnyObjectByType<Camera>().gameObject.GetComponent<Animator>();
     }
 
     public void TakeDamage(int damage)
@@ -27,6 +30,7 @@ public class PlayerDamageReceiver : MonoBehaviour, IHealth
         if (canTakeDamage)
         {
             playerCurrentHealth -= damage;
+            ani.SetTrigger("Camera_SoftShake");
             Debug.Log("Player took damage, current health: " + playerCurrentHealth);
             if (playerCurrentHealth <= 0)
             {
