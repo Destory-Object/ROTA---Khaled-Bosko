@@ -6,8 +6,12 @@ public class PlayerInteraction : MonoBehaviour
     public InputActionProperty interactAction;
     private IInteractable currentInteractable;
 
+    InputAction scanAction;
+
     private void OnEnable()
     {
+
+        scanAction = InputSystem.actions.FindAction("Interact");
         interactAction.action.Enable();
         interactAction.action.performed += OnInteract;
     }

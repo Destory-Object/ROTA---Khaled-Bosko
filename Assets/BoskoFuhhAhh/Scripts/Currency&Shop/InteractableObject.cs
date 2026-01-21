@@ -6,7 +6,6 @@ public class InteractableObject : MonoBehaviour, IInteractable
     public string interactAnimationTrigger = "Interact";
     public int rewardAmount = 10;
     private bool hasInteracted = false;
-
     private void Start()
     {
         if (animator == null)
@@ -21,8 +20,9 @@ public class InteractableObject : MonoBehaviour, IInteractable
         {
             hasInteracted = true;
             animator.SetTrigger(interactAnimationTrigger);
-            PlayerCurrency.Instance.AddCurrency(rewardAmount);
-            // Optionally disable collider or object after interaction
+            PlayerCurrency playerCurrency = new PlayerCurrency();
+            playerCurrency.AddCurrency(rewardAmount);
+  
             GetComponent<Collider2D>().enabled = false;
         }
     }

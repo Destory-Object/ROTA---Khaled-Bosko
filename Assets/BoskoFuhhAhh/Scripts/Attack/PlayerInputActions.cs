@@ -9,6 +9,7 @@ public class PlayerInputActions : MonoBehaviour, IContract
     public LayerMask enemyLayers;
     [SerializeField] int damageAmount;
 
+
     InputAction parryAction;
     private InputAction attackAction;
     private bool isParrying = false;
