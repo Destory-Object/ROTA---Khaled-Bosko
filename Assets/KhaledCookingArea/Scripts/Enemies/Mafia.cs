@@ -5,6 +5,8 @@ using UnityEngine.UIElements;
 
 public class Mafia : EnemyClass
 {
+    [SerializeField] public Rigidbody2D aliveRb;
+
     [SerializeField]
     private float
         groundcheckDistance,
@@ -27,8 +29,6 @@ public class Mafia : EnemyClass
         facingDirection,
         damageDirection;
 
-    private GameObject alive;
-
     private Vector2 movement;
 
     private bool
@@ -37,10 +37,35 @@ public class Mafia : EnemyClass
 
     private void Start()
     {
-        alive = transform.GetChild(0).gameObject;
+        aliveRb = GetComponent<Rigidbody2D>();
         facingDirection = 1;
 
         currentState = State.Idle;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+
+            Debug.Log("sees player");
+            int value = Random.Range(1, 3);
+
+            if (value == 1)
+            {
+                Debug.Log("im doing some"); //DO SOMETHING
+            }
+            else
+            {
+                Debug.Log("im doing some 2"); //DO SOMETHING ELSE
+            }
+        }
+      
     }
 
     private void Update()
@@ -70,7 +95,6 @@ public class Mafia : EnemyClass
 
     IEnumerator IdleThinking()
     {
-        currentState = State.None;
 
         yield return new WaitForSeconds(4);
 
@@ -79,9 +103,9 @@ public class Mafia : EnemyClass
 
     IEnumerator WalkIdleLOOP()
     {
-        currentState = State.Walking;
+        
 
-        yield return new WaitForSeconds(10);
+        yield return new WaitForSeconds(5);
 
         currentState = State.Idle;
     }
@@ -110,7 +134,7 @@ public class Mafia : EnemyClass
     private void Flip()
     {
         facingDirection *= -1;
-        alive.transform.Rotate(0.0f, 180.0f, 0.0f);
+       transform.Rotate(0.0f, 180.0f, 0.0f);
     }
     #endregion
 }
