@@ -35,12 +35,38 @@ public class Mafia : EnemyClass
         groundDetected,
         wallDetected;
 
+
+    [Header("Detection Position")]
+    [SerializeField] Transform DetectPointFront;
+    [SerializeField] float DPFradius;
+    [SerializeField] bool detectedPlayer;
+
+    [Header("Detection Position")]
+    [SerializeField] Transform DetectPointBack;
+    [SerializeField] float DPBradius;
+    [SerializeField] bool backDetected;
+
     private void Start()
     {
         aliveRb = GetComponent<Rigidbody2D>();
         facingDirection = 1;
 
         currentState = State.Idle;
+    }
+
+
+    private void Detection()
+    {
+        detectedPlayer = Physics2D.OverlapCircle(DetectPointFront.position, DPFradius, whatIsPlayer);
+        backDetected = Physics2D.OverlapCircle(DetectPointBack.position, DPBradius, whatIsPlayer);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(DetectPointFront.position, DPFradius);
+        Gizmos.color = Color.pink;
+        Gizmos.DrawWireSphere(DetectPointBack.position, DPBradius);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -65,11 +91,14 @@ public class Mafia : EnemyClass
                 Debug.Log("im doing some 2"); //DO SOMETHING ELSE
             }
         }
-      
+
     }
 
     private void Update()
     {
+
+
+        Detection();
         switch (currentState)
         {
             case State.Idle:
@@ -79,6 +108,12 @@ public class Mafia : EnemyClass
                 //case State.Dead:
                 //    // UpdateDeadState();
                 //    break;
+        }
+
+        if (backDetected == true)
+        {
+            Flip();
+          //  StartCoroutine(FlipBehavior());
         }
     }
 
@@ -103,7 +138,7 @@ public class Mafia : EnemyClass
 
     IEnumerator WalkIdleLOOP()
     {
-        
+
 
         yield return new WaitForSeconds(5);
 
@@ -131,10 +166,19 @@ public class Mafia : EnemyClass
         }
     }
 
+    //IEnumerator FlipBehavior()
+    //{
+    //    Debug.Log("Jag Flipppar!!!");
+
+    //    yield return new WaitForSeconds(0.3f);
+
+    //    Flip();
+    //}
+
     private void Flip()
     {
         facingDirection *= -1;
-       transform.Rotate(0.0f, 180.0f, 0.0f);
+        transform.Rotate(0.0f, 180.0f, 0.0f);
     }
     #endregion
 }

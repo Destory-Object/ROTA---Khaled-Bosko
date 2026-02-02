@@ -928,7 +928,7 @@ MonoBehaviour:
     m_Bits: 128
   whatIsPlayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   currentHealth: 4
   DetectPointFront: {fileID: 1236187827}
   DPFradius: 1.4
