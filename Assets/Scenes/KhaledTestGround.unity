@@ -379,7 +379,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1768666106722627305, guid: 602f149a1b92df74ea9c1d514c292749, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -6.01
+      value: -6.39
       objectReference: {fileID: 0}
     - target: {fileID: 1768666106722627305, guid: 602f149a1b92df74ea9c1d514c292749, type: 3}
       propertyPath: m_LocalPosition.y
@@ -900,7 +900,7 @@ GameObject:
   - component: {fileID: 1743483620}
   - component: {fileID: 1743483618}
   - component: {fileID: 1743483622}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Mafia
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -930,10 +930,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   currentHealth: 4
-  DetectPointFront: {fileID: 1236187827}
-  DPFradius: 1.4
-  DetectPointBack: {fileID: 1947847136}
-  DPBradius: 1
   aliveRb: {fileID: 1743483620}
   groundcheckDistance: 0.5
   wallcheckDistance: 0.1
@@ -942,6 +938,13 @@ MonoBehaviour:
   wallcheck: {fileID: 541027894}
   knockbackSpeed: {x: 0, y: 0}
   KnockbackStartTime: 0
+  isActionable: 0
+  DetectPointFront: {fileID: 1236187827}
+  DPFradius: 1.4
+  detectedPlayer: 0
+  DetectPointBack: {fileID: 1947847136}
+  DPBradius: 1
+  backDetected: 0
 --- !u!212 &1743483619
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1107,7 +1110,7 @@ Transform:
   m_GameObject: {fileID: 1947847135}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.49, y: 0.03, z: 0}
+  m_LocalPosition: {x: -1.93, y: 0.03, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -3,8 +3,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class Mafia : EnemyClass
+public class Mafia : EnemyClass , IHealth
 {
+    int health;
     [SerializeField] public Rigidbody2D aliveRb;
 
     [SerializeField]
@@ -33,7 +34,10 @@ public class Mafia : EnemyClass
 
     private bool
         groundDetected,
-        wallDetected;
+        wallDetected,
+        detectedPlayerOnce = false;
+
+    [SerializeField] bool isActionable;
 
 
     [Header("Detection Position")]
@@ -69,34 +73,46 @@ public class Mafia : EnemyClass
         Gizmos.DrawWireSphere(DetectPointBack.position, DPBradius);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
 
+    //}
+
+    //private void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    if (collision.gameObject.CompareTag(""))
+    //    {
+    //        TakeDmg();
+    //    }
+
+    //}
+
+    IEnumerator GainBack()
+    {
+        isActionable = false;
+
+        yield return new WaitForSeconds(1);
+
+        isActionable = true;
+        detectedPlayerOnce = false;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    void Die()
     {
-        if (collision.gameObject.CompareTag("Player"))
-        {
+        Destroy(gameObject);
+    }
 
-            Debug.Log("sees player");
-            int value = Random.Range(1, 3);
-
-            if (value == 1)
-            {
-                Debug.Log("im doing some"); //DO SOMETHING
-            }
-            else
-            {
-                Debug.Log("im doing some 2"); //DO SOMETHING ELSE
-            }
-        }
-
+    void Dash()
+    {
+        aliveRb.AddForce(transform.right * 200, ForceMode2D.Impulse);
+    }
+    void BackOff()
+    {
+        aliveRb.AddForce(-transform.right * 200, ForceMode2D.Impulse);
     }
 
     private void Update()
     {
-
 
         Detection();
         switch (currentState)
@@ -113,8 +129,38 @@ public class Mafia : EnemyClass
         if (backDetected == true)
         {
             Flip();
-          //  StartCoroutine(FlipBehavior());
+            //  StartCoroutine(FlipBehavior());
         }
+
+        if (detectedPlayer == true)
+        {
+            if (!detectedPlayerOnce)
+            {
+                detectedPlayerOnce = true;
+                Debug.Log("sees player");
+                int value = Random.Range(1, 3);
+
+                if (value == 1)
+                {
+                    Debug.Log("im doing some"); //DO SOMETHING
+                    if (isActionable == true)
+                    {
+                        Dash();
+                        StartCoroutine(GainBack());
+                    }
+                }
+                else
+                {
+                    Debug.Log("im doing some 2"); //DO SOMETHING ELSE
+                    if (isActionable == true)
+                    {
+                        BackOff();
+                        StartCoroutine(GainBack());
+                    }
+                }
+            }
+        }
+
     }
 
     private void FixedUpdate()
@@ -162,23 +208,40 @@ public class Mafia : EnemyClass
             movement.Set(movementSpeed * facingDirection, aliveRb.linearVelocityY);
             aliveRb.linearVelocity = movement;
 
-            // Debug.Log(facingDirection);
+
         }
     }
 
-    //IEnumerator FlipBehavior()
-    //{
-    //    Debug.Log("Jag Flipppar!!!");
 
-    //    yield return new WaitForSeconds(0.3f);
-
-    //    Flip();
-    //}
 
     private void Flip()
     {
         facingDirection *= -1;
         transform.Rotate(0.0f, 180.0f, 0.0f);
+    }
+
+    public void RegenHealth(int amount)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void TakeDamage(int amount)
+    {
+        health -= amount;
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+
+    public int GetHealth()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Kill()
+    {
+        throw new System.NotImplementedException();
     }
     #endregion
 }
