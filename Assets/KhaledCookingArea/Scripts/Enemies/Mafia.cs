@@ -104,16 +104,16 @@ public class Mafia : EnemyClass , IHealth
 
     void Dash()
     {
-        aliveRb.AddForce(transform.right * 200, ForceMode2D.Impulse);
+        print("dash");
+        aliveRb.AddForce(transform.right * 2, ForceMode2D.Impulse);
     }
     void BackOff()
     {
-        aliveRb.AddForce(-transform.right * 200, ForceMode2D.Impulse);
+        aliveRb.AddForce(-transform.right * 2, ForceMode2D.Impulse);
     }
 
     private void Update()
     {
-
         Detection();
         switch (currentState)
         {
@@ -129,11 +129,12 @@ public class Mafia : EnemyClass , IHealth
         if (backDetected == true)
         {
             Flip();
-            //  StartCoroutine(FlipBehavior());
+            aliveRb.AddForce(Vector2.right * 3, ForceMode2D.Impulse);
         }
 
         if (detectedPlayer == true)
         {
+
             if (!detectedPlayerOnce)
             {
                 detectedPlayerOnce = true;
@@ -145,7 +146,7 @@ public class Mafia : EnemyClass , IHealth
                     Debug.Log("im doing some"); //DO SOMETHING
                     if (isActionable == true)
                     {
-                        Dash();
+                        
                         StartCoroutine(GainBack());
                     }
                 }
@@ -154,7 +155,7 @@ public class Mafia : EnemyClass , IHealth
                     Debug.Log("im doing some 2"); //DO SOMETHING ELSE
                     if (isActionable == true)
                     {
-                        BackOff();
+                        
                         StartCoroutine(GainBack());
                     }
                 }
