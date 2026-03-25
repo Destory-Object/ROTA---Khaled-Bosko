@@ -22,7 +22,6 @@ public class InteractableObject : MonoBehaviour, IInteractable
             animator.SetTrigger(interactAnimationTrigger);
             PlayerCurrency playerCurrency = new PlayerCurrency();
             playerCurrency.AddCurrency(rewardAmount);
-  
             GetComponent<Collider2D>().enabled = false;
         }
     }

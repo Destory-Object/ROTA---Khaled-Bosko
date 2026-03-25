@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class PlayerInteraction : MonoBehaviour
 {
     public InputActionProperty interactAction;
-    private IInteractable currentInteractable;
+    public GameObject currentInteractable;
 
     InputAction scanAction;
 
@@ -12,29 +12,29 @@ public class PlayerInteraction : MonoBehaviour
     {
 
         scanAction = InputSystem.actions.FindAction("Interact");
-        interactAction.action.Enable();
-        interactAction.action.performed += OnInteract;
+    
+       
     }
 
-    private void OnDisable()
+    private void Update()
     {
-        interactAction.action.performed -= OnInteract;
-        interactAction.action.Disable();
-    }
-
-    private void OnInteract(InputAction.CallbackContext context)
-    {
-        if (currentInteractable != null)
+        if(scanAction.WasPerformedThisFrame())
         {
-            currentInteractable.Interact();
+            if (currentInteractable != null)
+            {
+                currentInteractable.GetComponent<IInteractable>().Interact();   
+            }
         }
     }
+
+   
+  
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Interactable"))
         {
-            currentInteractable = collision.GetComponent<IInteractable>();
+            currentInteractable = collision.gameObject;
         }
     }
 
@@ -42,10 +42,9 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (collision.CompareTag("Interactable"))
         {
-            if (collision.GetComponent<IInteractable>() == currentInteractable)
-            {
+            
                 currentInteractable = null;
-            }
+            
         }
     }
 }

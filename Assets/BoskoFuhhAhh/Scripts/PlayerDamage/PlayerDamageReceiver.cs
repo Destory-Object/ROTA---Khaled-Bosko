@@ -39,9 +39,6 @@ public class PlayerDamageReceiver : MonoBehaviour, IHealth
         }
     }
 
-
-
-
     //private void Update()
     //{
     //    if(playerCurrentHealth  <= 0)

@@ -109,10 +109,7 @@ public class PlayerInputActions : MonoBehaviour, IContract
             Debug.Log("We hit " + enemy.name);
             IHealth healthComp = enemy.GetComponent<IHealth>();
             if (healthComp != null)
-                healthComp.TakeDamage(damageAmount);
-           
-
-          
+                healthComp.TakeDamage(damageAmount); 
         }
     }
 

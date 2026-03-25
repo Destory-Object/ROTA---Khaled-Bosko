@@ -42,6 +42,7 @@ public class PlayerController : MonoBehaviour
     private PlayerInputActions inputActions;
     private InputAction scanAction;
 
+
     void Start()
     {
         inputActions = GetComponent<PlayerInputActions>();
