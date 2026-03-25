@@ -3,8 +3,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-public class Mafia : EnemyClass
+public class Mafia : EnemyClass , IHealth
 {
+    int health;
     [SerializeField] public Rigidbody2D aliveRb;
 
     [SerializeField]
@@ -33,7 +34,21 @@ public class Mafia : EnemyClass
 
     private bool
         groundDetected,
-        wallDetected;
+        wallDetected,
+        detectedPlayerOnce = false;
+
+    [SerializeField] bool isActionable;
+
+
+    [Header("Detection Position")]
+    [SerializeField] Transform DetectPointFront;
+    [SerializeField] float DPFradius;
+    [SerializeField] bool detectedPlayer;
+
+    [Header("Detection Position")]
+    [SerializeField] Transform DetectPointBack;
+    [SerializeField] float DPBradius;
+    [SerializeField] bool backDetected;
 
     private void Start()
     {
@@ -43,33 +58,63 @@ public class Mafia : EnemyClass
         currentState = State.Idle;
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
 
+    private void Detection()
+    {
+        detectedPlayer = Physics2D.OverlapCircle(DetectPointFront.position, DPFradius, whatIsPlayer);
+        backDetected = Physics2D.OverlapCircle(DetectPointBack.position, DPBradius, whatIsPlayer);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnDrawGizmos()
     {
-        if (collision.gameObject.CompareTag("Player"))
-        {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(DetectPointFront.position, DPFradius);
+        Gizmos.color = Color.pink;
+        Gizmos.DrawWireSphere(DetectPointBack.position, DPBradius);
+    }
 
-            Debug.Log("sees player");
-            int value = Random.Range(1, 3);
+    //private void OnTriggerEnter2D(Collider2D collision)
+    //{
 
-            if (value == 1)
-            {
-                Debug.Log("im doing some"); //DO SOMETHING
-            }
-            else
-            {
-                Debug.Log("im doing some 2"); //DO SOMETHING ELSE
-            }
-        }
-      
+    //}
+
+    //private void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    if (collision.gameObject.CompareTag(""))
+    //    {
+    //        TakeDmg();
+    //    }
+
+    //}
+
+    IEnumerator GainBack()
+    {
+        isActionable = false;
+
+        yield return new WaitForSeconds(1);
+
+        isActionable = true;
+        detectedPlayerOnce = false;
+    }
+
+    void Die()
+    {
+        Destroy(gameObject);
+    }
+
+    void Dash()
+    {
+        print("dash");
+        aliveRb.AddForce(transform.right * 2, ForceMode2D.Impulse);
+    }
+    void BackOff()
+    {
+        aliveRb.AddForce(-transform.right * 2, ForceMode2D.Impulse);
     }
 
     private void Update()
     {
+        Detection();
         switch (currentState)
         {
             case State.Idle:
@@ -80,6 +125,43 @@ public class Mafia : EnemyClass
                 //    // UpdateDeadState();
                 //    break;
         }
+
+        if (backDetected == true)
+        {
+            Flip();
+            aliveRb.AddForce(Vector2.right * 3, ForceMode2D.Impulse);
+        }
+
+        if (detectedPlayer == true)
+        {
+
+            if (!detectedPlayerOnce)
+            {
+                detectedPlayerOnce = true;
+                Debug.Log("sees player");
+                int value = Random.Range(1, 3);
+
+                if (value == 1)
+                {
+                    Debug.Log("im doing some"); //DO SOMETHING
+                    if (isActionable == true)
+                    {
+                        
+                        StartCoroutine(GainBack());
+                    }
+                }
+                else
+                {
+                    Debug.Log("im doing some 2"); //DO SOMETHING ELSE
+                    if (isActionable == true)
+                    {
+                        
+                        StartCoroutine(GainBack());
+                    }
+                }
+            }
+        }
+
     }
 
     private void FixedUpdate()
@@ -103,7 +185,7 @@ public class Mafia : EnemyClass
 
     IEnumerator WalkIdleLOOP()
     {
-        
+
 
         yield return new WaitForSeconds(5);
 
@@ -127,14 +209,40 @@ public class Mafia : EnemyClass
             movement.Set(movementSpeed * facingDirection, aliveRb.linearVelocityY);
             aliveRb.linearVelocity = movement;
 
-            // Debug.Log(facingDirection);
+
         }
     }
+
+
 
     private void Flip()
     {
         facingDirection *= -1;
-       transform.Rotate(0.0f, 180.0f, 0.0f);
+        transform.Rotate(0.0f, 180.0f, 0.0f);
+    }
+
+    public void RegenHealth(int amount)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void TakeDamage(int amount)
+    {
+        health -= amount;
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+
+    public int GetHealth()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void Kill()
+    {
+        throw new System.NotImplementedException();
     }
     #endregion
 }
