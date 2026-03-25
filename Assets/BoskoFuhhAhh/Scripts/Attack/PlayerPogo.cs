@@ -10,7 +10,7 @@ public class PlayerPogo : MonoBehaviour
     [SerializeField] float bounceForce = 8f;
 
     private Rigidbody2D playerRb;
-    private InputAction PogoAttack;
+    private InputAction attackAction;
 
     private PlayerController pc;
 
@@ -29,7 +29,7 @@ public class PlayerPogo : MonoBehaviour
     private void Start()
     {
         playerRb = GetComponent<Rigidbody2D>();
-        PogoAttack = InputSystem.actions.FindAction("PogoAttack");
+        attackAction = InputSystem.actions.FindAction("Attack");
     }
 
     private void Update()
@@ -42,7 +42,7 @@ public class PlayerPogo : MonoBehaviour
         {
             pogoAttackPoint.localPosition = attackOffsetUnder * attackDistance;
 
-            if (PogoAttack.WasPressedThisFrame())
+            if (attackAction.WasPressedThisFrame())
                 TestPogo();
         }
     }

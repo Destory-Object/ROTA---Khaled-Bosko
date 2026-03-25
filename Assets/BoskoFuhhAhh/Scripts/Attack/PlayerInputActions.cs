@@ -33,7 +33,7 @@ public class PlayerInputActions : MonoBehaviour, IContract
     private void Start()
     {
         parryAction = InputSystem.actions.FindAction("Parry");
-        playerRb = GetComponent<Rigidbody2D>(); 
+        playerRb = GetComponent<Rigidbody2D>();     
     }
 
     private void Awake()
