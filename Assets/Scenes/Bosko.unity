@@ -1084,7 +1084,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7838b1391b3377644bb5491a6da3d9a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Currency
-  animator: {fileID: 0}
+  animator: {fileID: 1063316870}
   interactAnimationTrigger: Interact
   rewardAmount: 10
 --- !u!212 &1063316867
@@ -1154,7 +1154,7 @@ Transform:
   m_GameObject: {fileID: 1063316865}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.78, y: 4.39, z: 0}
+  m_LocalPosition: {x: -3.3, y: -2.09, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2045,6 +2045,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 8289038627729587650, guid: d95f46cd4a929d44ba426176b845791c, type: 3}
+      propertyPath: _playerCurrency.text
+      value: 
+      objectReference: {fileID: 1941484116}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

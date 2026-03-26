@@ -8,6 +8,9 @@ public class EnemyShooter : MonoBehaviour, IHealth
     public float projectileSpeed = 5f;
     public int maxHealth = 3;
 
+    public Animator animator; // Assign in inspector or get in Start()
+    public string shootAnimationTrigger = "Shoot"; // Trigger name in Animator
+
     private int currentHealth;
     private Transform playerTransform;
     private float shootTimer;
@@ -17,6 +20,11 @@ public class EnemyShooter : MonoBehaviour, IHealth
         currentHealth = maxHealth;
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         shootTimer = shootInterval;
+
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+        }
     }
 
     private void Update()
@@ -27,8 +35,17 @@ public class EnemyShooter : MonoBehaviour, IHealth
         shootTimer -= Time.deltaTime;
         if (shootTimer <= 0f)
         {
+            PlayShootAnimation();
             ShootAtPlayer();
             shootTimer = shootInterval;
+        }
+    }
+
+    private void PlayShootAnimation()
+    {
+        if (animator != null && !string.IsNullOrEmpty(shootAnimationTrigger))
+        {
+            animator.SetTrigger(shootAnimationTrigger);
         }
     }
 
@@ -76,7 +93,6 @@ public class EnemyShooter : MonoBehaviour, IHealth
 
     private void Die()
     {
-        // Play death animation or effects here
         Destroy(gameObject);
     }
 }

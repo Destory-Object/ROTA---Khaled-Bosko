@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 
@@ -42,6 +43,8 @@ public class PlayerController : MonoBehaviour
     private PlayerInputActions inputActions;
     private InputAction scanAction;
 
+    [SerializeField] PlayerCurrency _playerCurrency = new PlayerCurrency();
+    public PlayerCurrency playerCurrency => _playerCurrency;
 
     void Start()
     {
@@ -169,8 +172,15 @@ public class PlayerController : MonoBehaviour
     void PlayerIsScaning()
     {
         playerRb.linearVelocityX = 0;
-       
+        StartCoroutine(callAfterTime(1, () => playerState = "Normal"));
     }
+
+    IEnumerator callAfterTime(float waitTime, UnityAction function)
+    {
+        yield return new WaitForSeconds(waitTime);
+        function();
+    }
+
     void ReadPlayerInputs()
     {
         if (playerState == "parryState" || inputActions.IsParrying())
@@ -217,7 +227,7 @@ public class PlayerController : MonoBehaviour
                 coyoteTimer -= Time.deltaTime;
             }
         }
-    } 
+    }
     private void CheckGrounded()
     {
         isGrounded = Physics2D.OverlapCircle(groundCheckPosition.position, groundCheckRadius, groundedLayers);
