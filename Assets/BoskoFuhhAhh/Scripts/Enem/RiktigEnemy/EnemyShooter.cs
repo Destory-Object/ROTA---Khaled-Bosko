@@ -15,6 +15,10 @@ public class EnemyShooter : MonoBehaviour, IHealth
     private Transform playerTransform;
     private float shootTimer;
 
+
+    public GameObject interactablePrefab; // Assign in inspector
+    public Transform spawnPoint; // Optional: assign in inspector or use enemy position
+
     private void Start()
     {
         currentHealth = maxHealth;
@@ -93,6 +97,17 @@ public class EnemyShooter : MonoBehaviour, IHealth
 
     private void Die()
     {
+        // Spawn the interactable object at a specific point (e.g., enemy position)
+        if (interactablePrefab != null && spawnPoint != null)
+        {
+            Instantiate(interactablePrefab, spawnPoint.position, Quaternion.identity);
+        }
+        else if (interactablePrefab != null)
+        {
+            // If spawnPoint not set, spawn at the enemy's current position
+            Instantiate(interactablePrefab, transform.position, Quaternion.identity);
+        }
+
         Destroy(gameObject);
     }
 }

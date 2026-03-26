@@ -64,7 +64,7 @@
                     "name": "Previous",
                     "type": "Button",
                     "id": "2776c80d-3c14-4091-8c56-d04ced07a2b0",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -452,17 +452,6 @@
                     "name": "",
                     "id": "50966ee9-0ade-4361-a0b9-c5e7c92aa7d7",
                     "path": "<Keyboard>/f",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Parry",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "742be862-30f4-46cc-aa8d-502089dd369a",
-                    "path": "",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
