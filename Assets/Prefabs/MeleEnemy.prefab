@@ -75,6 +75,7 @@ GameObject:
   - component: {fileID: 2288588169454358493}
   - component: {fileID: 7140280832080196448}
   - component: {fileID: 789772156062085363}
+  - component: {fileID: 7660525542301655604}
   m_Layer: 3
   m_Name: MeleEnemy
   m_TagString: Enemy
@@ -249,3 +250,28 @@ MonoBehaviour:
   parryCounterDamage: 1
   interactablePrefab: {fileID: 4089074484847665338, guid: b0eed04ef121fa7429e3386d16ce1ce0, type: 3}
   spawnPoint: {fileID: 5474869840643315098}
+  warningIndicator: {fileID: 5583832160364864633, guid: 6ec7a0c7c41fe474f8c0a1617ea2b93b, type: 3}
+  windupColor: {r: 0.7320642, g: 0.79622644, b: 0.13671057, a: 1}
+  flashSpeed: 8
+--- !u!95 &7660525542301655604
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4839133843373020498}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

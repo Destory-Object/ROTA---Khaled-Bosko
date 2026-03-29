@@ -1,12 +1,8 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-///   5. Assign interactablePrefab + spawnPoint if you want loot on death (same as EnemyShooter)
-///   6. Animator bools expected: "isWalking", "isAttacking", "isStunned", "isDead"
-
 public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
 {
-
     [Header("Health")]
     [SerializeField] private int maxHealth = 3;
     private int currentHealth;
@@ -14,45 +10,59 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float detectionRange = 5f;
+    [SerializeField] private float stopDistance = 1.2f;     // Enemy halts here — should be just outside
+                                                            // meleeStartRange so it stops then attacks
 
     [Header("Attack")]
     [SerializeField] private Transform attackPoint;
-    [SerializeField] private float attackRange = 0.6f;
+    [SerializeField] private float meleeStartRange = 1.5f;
+    [SerializeField] private float attackHitboxRange = 0.6f;
     [SerializeField] private LayerMask playerLayer;
     [SerializeField] private int attackDamage = 1;
     [SerializeField] private float attackCooldown = 2f;
 
     [Header("Attack Timing")]
-    [SerializeField] private float attackWindupDuration = 0.4f;   // How long the windup lasts — parry window
-    [SerializeField] private float attackActiveDuration = 0.2f;   // How long the hitbox is live
+    [SerializeField] private float attackWindupDuration = 0.4f;
+    [SerializeField] private float attackActiveDuration = 0.2f;
 
     [Header("Parry")]
     [SerializeField] private float parryStunDuration = 1.5f;
-    [SerializeField] private int parryCounterDamage = 1;           // Damage enemy takes when parried
+    [SerializeField] private int parryCounterDamage = 1;
 
-    [Header("Loot (same as EnemyShooter)")]
+    [Header("Loot")]
     [SerializeField] private GameObject interactablePrefab;
     [SerializeField] private Transform spawnPoint;
 
+    [Header("Attack Telegraph")]
+    [SerializeField] private GameObject warningIndicator;
+    [SerializeField] private Color windupColor = Color.red;
+    [SerializeField] private float flashSpeed = 8f;
 
     private enum State { Idle, Chasing, WindingUp, Attacking, Stunned, Dead }
     private State state = State.Idle;
 
-    private bool canBeParried = false;
     private float lastAttackTime = -99f;
 
     private Transform playerTransform;
-    private PlayerInputActions playerInputActions;   // to call IsParrying()
+    private PlayerInputActions playerInputActions;
     private Rigidbody2D rb;
     private Animator animator;
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
 
     private void Start()
     {
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
 
-        // Find the player — same pattern as EnemyShooter
+        if (spriteRenderer != null)
+            originalColor = spriteRenderer.color;
+
+        if (warningIndicator != null)
+            warningIndicator.SetActive(false);
+
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
@@ -79,8 +89,6 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
             case State.Chasing:
                 ChasePlayer(dist);
                 break;
-
-                // WindingUp / Attacking / Stunned are all driven by coroutines
         }
     }
 
@@ -95,18 +103,24 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
 
         if (state == State.Chasing && playerTransform != null)
         {
+            float dist = Vector2.Distance(transform.position, playerTransform.position);
             float dir = playerTransform.position.x > transform.position.x ? 1f : -1f;
-            rb.linearVelocityX = dir * moveSpeed;
 
-            // Flip sprite to face player
+            // Always face the player
             transform.rotation = Quaternion.Euler(0f, dir < 0 ? 180f : 0f, 0f);
+
+            // Stop moving once close enough — stand in front without touching
+            if (dist <= stopDistance)
+                rb.linearVelocityX = 0f;
+            else
+                rb.linearVelocityX = dir * moveSpeed;
         }
     }
 
-
     private void ChasePlayer(float dist)
     {
-        animator?.SetBool("isWalking", true);
+        bool inStopZone = dist <= stopDistance;
+        animator?.SetBool("isWalking", !inStopZone);    // Stop walk animation when standing still
 
         // Lost the player
         if (dist > detectionRange * 1.5f)
@@ -116,45 +130,47 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
             return;
         }
 
-        // Close enough to attack
-        if (dist <= attackRange && Time.time >= lastAttackTime + attackCooldown)
+        // Start attack when within melee range and off cooldown
+        if (dist <= meleeStartRange && Time.time >= lastAttackTime + attackCooldown)
         {
             lastAttackTime = Time.time;
+            state = State.WindingUp;
             StartCoroutine(AttackRoutine());
         }
     }
 
-    // ── Attack coroutine ───────────────────────────────────────────────────
     private IEnumerator AttackRoutine()
     {
-        // --- WINDUP: player can parry here ---
-        state = State.WindingUp;
-        canBeParried = true;
         animator?.SetBool("isWalking", false);
         animator?.SetBool("isAttacking", true);
 
+        ShowWarning(true);
+        StartCoroutine(FlashSprite());
+
+        // WINDUP: parry window
         float windupTimer = 0f;
         while (windupTimer < attackWindupDuration)
         {
             windupTimer += Time.deltaTime;
 
-            // Player pressed parry during windup → enemy gets countered
             if (playerInputActions != null && playerInputActions.IsParrying())
             {
-                canBeParried = false;
                 animator?.SetBool("isAttacking", false);
+                ShowWarning(false);
+                ResetSpriteColor();
                 StartCoroutine(ParryStunRoutine());
                 yield break;
             }
             yield return null;
         }
-        canBeParried = false;
 
-        // Interrupted by stun or death during windup
+        ShowWarning(false);
+        ResetSpriteColor();
+
         if (state == State.Stunned || state == State.Dead)
             yield break;
 
-        // --- ACTIVE HIT WINDOW ---
+        // ACTIVE HIT WINDOW
         state = State.Attacking;
 
         float activeTimer = 0f;
@@ -162,23 +178,18 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
 
         while (activeTimer < attackActiveDuration && !hitLanded)
         {
-            // Uses the same utility your other scripts use
             Collider2D[] hits = AttackUtilities.DetectEnemies(
-                attackPoint.position, attackRange, playerLayer);
+                attackPoint.position, attackHitboxRange, playerLayer);
 
             foreach (Collider2D hit in hits)
             {
-                // Check parry one more time — if player parried at the very last moment
                 if (playerInputActions != null && playerInputActions.IsParrying())
                 {
-                    // Late parry — still counts
-                    canBeParried = false;
                     animator?.SetBool("isAttacking", false);
                     StartCoroutine(ParryStunRoutine());
                     yield break;
                 }
 
-                // Deal damage through IHealth — same as your PlayerPogo does
                 IHealth health = hit.GetComponent<IHealth>();
                 if (health != null)
                 {
@@ -197,7 +208,33 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
             state = State.Chasing;
     }
 
-    // ── Parry stun ─────────────────────────────────────────────────────────
+    private void ShowWarning(bool show)
+    {
+        if (warningIndicator != null)
+            warningIndicator.SetActive(show);
+    }
+
+    private IEnumerator FlashSprite()
+    {
+        if (spriteRenderer == null) yield break;
+
+        float timer = 0f;
+        while (state == State.WindingUp)
+        {
+            float t = (Mathf.Sin(timer * flashSpeed) + 1f) / 2f;
+            spriteRenderer.color = Color.Lerp(originalColor, windupColor, t);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        ResetSpriteColor();
+    }
+
+    private void ResetSpriteColor()
+    {
+        if (spriteRenderer != null)
+            spriteRenderer.color = originalColor;
+    }
+
     private IEnumerator ParryStunRoutine()
     {
         state = State.Stunned;
@@ -205,8 +242,6 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
         animator?.SetBool("isAttacking", false);
 
         Debug.Log($"{name} was parried!");
-
-        // Enemy takes counter damage
         TakeDamage(parryCounterDamage);
 
         yield return new WaitForSeconds(parryStunDuration);
@@ -217,31 +252,26 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
         state = State.Chasing;
     }
 
-    // ── IHealth ────────────────────────────────────────────────────────────
     public void TakeDamage(int amount)
     {
         if (state == State.Dead) return;
-
         currentHealth -= amount;
         Debug.Log($"{name} took {amount} damage. HP: {currentHealth}/{maxHealth}");
-
-        if (currentHealth <= 0)
-            Die();
+        if (currentHealth <= 0) Die();
     }
 
-    public void RegenHealth(int amount)
-    {
+    public void RegenHealth(int amount) =>
         currentHealth = Mathf.Min(currentHealth + Mathf.Max(0, amount), maxHealth);
-    }
 
     public int GetHealth() => currentHealth;
-
     public void Kill() => Die();
 
     private void Die()
     {
         state = State.Dead;
         StopAllCoroutines();
+        ShowWarning(false);
+        ResetSpriteColor();
 
         animator?.SetBool("isWalking", false);
         animator?.SetBool("isAttacking", false);
@@ -252,7 +282,6 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
         rb.bodyType = RigidbodyType2D.Kinematic;
         GetComponent<Collider2D>().enabled = false;
 
-        // Spawn loot — identical pattern to EnemyShooter
         if (interactablePrefab != null)
         {
             Vector3 lootPos = spawnPoint != null ? spawnPoint.position : transform.position;
@@ -262,11 +291,6 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
         Destroy(gameObject, 3f);
     }
 
-    // ── IInteractable ──────────────────────────────────────────────────────
-    /// <summary>
-    /// PlayerInteraction calls this when the player presses Interact near the enemy.
-    /// Tag this GameObject "Interactable" so PlayerInteraction's trigger picks it up.
-    /// </summary>
     public void Interact()
     {
         switch (state)
@@ -274,13 +298,10 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
             case State.Dead:
                 Debug.Log($"Looting {name}...");
                 break;
-
             case State.Stunned:
-                // Parried enemy is vulnerable — instant kill on interact
                 Debug.Log($"Executed {name} while stunned!");
                 Die();
                 break;
-
             default:
                 Debug.Log($"{name} growls at you.");
                 break;
@@ -292,8 +313,17 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
 
-        Gizmos.color = Color.red;
+        // Stop distance — enemy plants its feet here
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(transform.position, stopDistance);
+
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, meleeStartRange);
+
         if (attackPoint != null)
-            Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(attackPoint.position, attackHitboxRange);
+        }
     }
 }

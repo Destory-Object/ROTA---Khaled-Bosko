@@ -8,7 +8,6 @@ public class PlayerPogo : MonoBehaviour
     public LayerMask enemies;
     [SerializeField] int damageAmount;
     [SerializeField] float bounceForce = 8f;
-
     private Rigidbody2D playerRb;
     private InputAction attackAction;
 
