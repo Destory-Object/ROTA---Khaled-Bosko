@@ -2,6 +2,8 @@
 
 public class EnemyShooter : MonoBehaviour, IHealth
 {
+    public int contactDamage = 1;
+
     public GameObject projectilePrefab;
     public Transform firePoint;
     public float shootInterval = 2f;
@@ -21,6 +23,8 @@ public class EnemyShooter : MonoBehaviour, IHealth
 
     private void Start()
     {
+        Rigidbody2D rb = GetComponent<Rigidbody2D>();
+        if (rb != null) rb.constraints = RigidbodyConstraints2D.FreezeAll;
         currentHealth = maxHealth;
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         shootTimer = shootInterval;
@@ -65,6 +69,16 @@ public class EnemyShooter : MonoBehaviour, IHealth
         Projectile projectileComp = projectile.GetComponent<Projectile>();
         if (projectileComp != null)
             projectileComp.damageAmount = 1;
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Player"))
+        {
+            IHealth health = collision.collider.GetComponent<IHealth>();
+            if (health != null)
+                health.TakeDamage(contactDamage);
+        }
     }
 
     public void TakeDamage(int amount)

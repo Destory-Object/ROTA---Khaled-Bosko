@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
+public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
 {
     [Header("Health")]
     [SerializeField] private int maxHealth = 3;
@@ -10,8 +10,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float detectionRange = 5f;
-    [SerializeField] private float stopDistance = 1.2f;     // Enemy halts here — should be just outside
-                                                            // meleeStartRange so it stops then attacks
+    [SerializeField] private float stopDistance = 1.2f;
 
     [Header("Attack")]
     [SerializeField] private Transform attackPoint;
@@ -38,7 +37,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
     [SerializeField] private Color windupColor = Color.red;
     [SerializeField] private float flashSpeed = 8f;
 
-    private enum State { Idle, Chasing, WindingUp, Attacking, Stunned, Dead }
+    private enum State { Idle, Chasing, WindingUp, Attacking, Stunned, Launched, Dead }
     private State state = State.Idle;
 
     private float lastAttackTime = -99f;
@@ -89,14 +88,25 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
             case State.Chasing:
                 ChasePlayer(dist);
                 break;
+
+            case State.Launched:
+                // Check if enemy has landed back on the ground
+                if (rb.linearVelocityY <= 0.05f && rb.linearVelocityY >= -0.5f && !IsAirborne())
+                    LandFromLaunch();
+                break;
         }
     }
 
     private void FixedUpdate()
     {
         if (state == State.Dead || state == State.Stunned
-            || state == State.WindingUp || state == State.Attacking)
+            || state == State.WindingUp || state == State.Attacking
+            || state == State.Launched)
         {
+            // Launched state: only freeze X so the enemy arcs naturally through the air
+            if (state == State.Launched)
+                return;
+
             rb.linearVelocityX = 0f;
             return;
         }
@@ -106,10 +116,8 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
             float dist = Vector2.Distance(transform.position, playerTransform.position);
             float dir = playerTransform.position.x > transform.position.x ? 1f : -1f;
 
-            // Always face the player
             transform.rotation = Quaternion.Euler(0f, dir < 0 ? 180f : 0f, 0f);
 
-            // Stop moving once close enough — stand in front without touching
             if (dist <= stopDistance)
                 rb.linearVelocityX = 0f;
             else
@@ -117,12 +125,64 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
         }
     }
 
+    // ── ILaunchable ────────────────────────────────────────────────────────
+    public void Launch(Vector2 force)
+    {
+        if (state == State.Dead) return;
+
+        StopAllCoroutines();
+        ShowWarning(false);
+        ResetSpriteColor();
+
+        state = State.Launched;
+
+        // Switch to dynamic so gravity and physics apply during the launch arc
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        rb.linearVelocity = force;
+
+        animator?.SetBool("isWalking", false);
+        animator?.SetBool("isAttacking", false);
+        animator?.SetTrigger("isLaunched");     // Optional: add this trigger to your animator
+
+        Debug.Log($"{name} launched into the air!");
+    }
+
+    private bool IsAirborne()
+    {
+        // Small downward raycast to check if grounded
+        RaycastHit2D hit = Physics2D.Raycast(
+            transform.position, Vector2.down, 0.6f,
+            ~LayerMask.GetMask("Enemies", "Player")); // ignore enemy and player layers
+        return hit.collider == null;
+    }
+
+    private void LandFromLaunch()
+    {
+        state = State.Stunned;
+        rb.linearVelocity = Vector2.zero;
+
+        // Briefly stun on landing — lets the player feel the impact
+        StartCoroutine(LandStunRoutine());
+    }
+
+    private IEnumerator LandStunRoutine()
+    {
+        animator?.SetBool("isStunned", true);
+        yield return new WaitForSeconds(parryStunDuration);
+
+        if (state == State.Dead) yield break;
+
+        animator?.SetBool("isStunned", false);
+        state = State.Chasing;
+    }
+
+    // ── Chase & Attack ─────────────────────────────────────────────────────
     private void ChasePlayer(float dist)
     {
         bool inStopZone = dist <= stopDistance;
-        animator?.SetBool("isWalking", !inStopZone);    // Stop walk animation when standing still
+        animator?.SetBool("isWalking", !inStopZone);
 
-        // Lost the player
         if (dist > detectionRange * 1.5f)
         {
             state = State.Idle;
@@ -130,7 +190,6 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
             return;
         }
 
-        // Start attack when within melee range and off cooldown
         if (dist <= meleeStartRange && Time.time >= lastAttackTime + attackCooldown)
         {
             lastAttackTime = Time.time;
@@ -147,7 +206,6 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
         ShowWarning(true);
         StartCoroutine(FlashSprite());
 
-        // WINDUP: parry window
         float windupTimer = 0f;
         while (windupTimer < attackWindupDuration)
         {
@@ -170,7 +228,6 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
         if (state == State.Stunned || state == State.Dead)
             yield break;
 
-        // ACTIVE HIT WINDOW
         state = State.Attacking;
 
         float activeTimer = 0f;
@@ -208,6 +265,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
             state = State.Chasing;
     }
 
+    // ── Telegraph ──────────────────────────────────────────────────────────
     private void ShowWarning(bool show)
     {
         if (warningIndicator != null)
@@ -217,7 +275,6 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
     private IEnumerator FlashSprite()
     {
         if (spriteRenderer == null) yield break;
-
         float timer = 0f;
         while (state == State.WindingUp)
         {
@@ -235,6 +292,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
             spriteRenderer.color = originalColor;
     }
 
+    // ── Parry stun ─────────────────────────────────────────────────────────
     private IEnumerator ParryStunRoutine()
     {
         state = State.Stunned;
@@ -252,6 +310,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
         state = State.Chasing;
     }
 
+    // ── IHealth ────────────────────────────────────────────────────────────
     public void TakeDamage(int amount)
     {
         if (state == State.Dead) return;
@@ -291,6 +350,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
         Destroy(gameObject, 3f);
     }
 
+    // ── IInteractable ──────────────────────────────────────────────────────
     public void Interact()
     {
         switch (state)
@@ -299,7 +359,8 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
                 Debug.Log($"Looting {name}...");
                 break;
             case State.Stunned:
-                Debug.Log($"Executed {name} while stunned!");
+            case State.Launched:
+                Debug.Log($"Executed {name}!");
                 Die();
                 break;
             default:
@@ -312,14 +373,10 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
-
-        // Stop distance — enemy plants its feet here
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, stopDistance);
-
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, meleeStartRange);
-
         if (attackPoint != null)
         {
             Gizmos.color = Color.red;

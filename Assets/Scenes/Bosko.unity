@@ -1258,6 +1258,34 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1196178457 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6016909474099998475, guid: d95f46cd4a929d44ba426176b845791c, type: 3}
+  m_PrefabInstance: {fileID: 4962581596219989698}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1196178471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1196178457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5d05acabc5e3e4409293b4e7dc2dd17, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChargeAttack
+  chargeHitRadius: 1
+  chargeDamage: 2
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  launchForceUp: 12
+  launchForceBack: 4
+  critChance: 0.25
+  critMultiplier: 2
+  hitStopDuration: 0.08
+  chargeCooldown: 1
 --- !u!1 &1420435853
 GameObject:
   m_ObjectHideFlags: 0
@@ -2511,7 +2539,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 6016909474099998475, guid: d95f46cd4a929d44ba426176b845791c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1196178471}
   m_SourcePrefab: {fileID: 100100000, guid: d95f46cd4a929d44ba426176b845791c, type: 3}
 --- !u!1001 &5255656974512154052
 PrefabInstance:
@@ -2622,9 +2653,13 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 5512949345887665221, guid: 40f419f832fd09545b6f698546da2d26, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: f808f53e808cb5549993d9c9b8d7e42b, type: 2}
     - target: {fileID: 5629659717259554691, guid: 40f419f832fd09545b6f698546da2d26, type: 3}
       propertyPath: detectionRange
-      value: 14.4
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 5629659717259554691, guid: 40f419f832fd09545b6f698546da2d26, type: 3}
       propertyPath: projectilePrefab
