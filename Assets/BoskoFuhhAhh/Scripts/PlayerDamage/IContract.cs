@@ -20,3 +20,10 @@ public interface HealthPickUp
 {
     public int GetHealth();
 }
+
+
+ 
+public interface ILaunchable
+{
+    void Launch(Vector2 force);
+}

@@ -26,6 +26,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float dashDuration;
     // bool isDashing = false;
 
+    [Header("Double Jump")]
+    [SerializeField] private bool canDoubleJump = false;
+    private bool hasDoubleJumped = false;
+
 
     [Header("Input Actions")]
     InputAction moveAction;
@@ -89,6 +93,9 @@ public class PlayerController : MonoBehaviour
                 ReadPlayerInputs();
 
                 break;
+            case "Climbing":
+                // Do nothing — LedgeGrab owns this state
+                break;
         }
 
         if (playerState == "parryState" || inputActions.IsParrying())
@@ -148,8 +155,12 @@ public class PlayerController : MonoBehaviour
                 PlayerIsScaning();
 
                 break;
-                
+
+            case "Climbing":
+                // Do nothing — LedgeGrab freezes rb directly
+                break;
         }
+
     }
     void NormalMovement()
     {
@@ -188,19 +199,28 @@ public class PlayerController : MonoBehaviour
 
         moveVector = moveAction.ReadValue<Vector2>().normalized;
 
-        if(jumpAction.WasPerformedThisFrame() && isGrounded && playerState == "Normal")
+        if (jumpAction.WasPerformedThisFrame() && playerState == "Normal")
         {
-            playerRb.linearVelocity = Vector2.zero;
-            playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-        } else if(jumpAction.WasPerformedThisFrame() && !isGrounded && coyoteTimer > 0)
-        {
-            playerRb.linearVelocity = Vector2.zero;
-            playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            if (isGrounded || coyoteTimer > 0)
+            {
+               
+                playerRb.linearVelocity = Vector2.zero;
+                playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                hasDoubleJumped = false; 
+            }
+            else if (canDoubleJump && !hasDoubleJumped)
+            {
+                
+                playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, 0f);
+                playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+                hasDoubleJumped = true;
+            }
         }
 
 
         if (dashAction.WasPerformedThisFrame() && isGrounded)
         {
+            Debug.Log("Suppost to Dash");
             playerState = "Dashing";
         }
         if(dashAction.WasReleasedThisFrame())
@@ -217,8 +237,9 @@ public class PlayerController : MonoBehaviour
     private void HandleCoyoteTime()
     {
         if (isGrounded)
-        { 
+        {
             coyoteTimer = CoyoteTime;
+            hasDoubleJumped = false; 
         }
         else
         {
@@ -228,6 +249,7 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
     private void CheckGrounded()
     {
         isGrounded = Physics2D.OverlapCircle(groundCheckPosition.position, groundCheckRadius, groundedLayers);

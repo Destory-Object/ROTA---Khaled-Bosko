@@ -8,7 +8,7 @@ public class Projectile : MonoBehaviour
 
     [Header("Parry Reflection")]
     [SerializeField] private float reflectSpeedMultiplier = 1.5f;
-    [SerializeField] private float reflectHitRadius = 0.3f;     // Manual hit detection radius on reflected shot
+    [SerializeField] private float reflectHitRadius = 0.3f;
 
     [Header("Parry Effects")]
     [SerializeField] private ParticleSystem parryParticles;
@@ -26,10 +26,10 @@ public class Projectile : MonoBehaviour
 
     private void Update()
     {
-        // Manual hit detection for reflected shot — bypasses layer matrix entirely
+   
         if (!isReflected) return;
 
-        // Find all "Enemy" tagged objects and check distance manually
+  
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach (GameObject enemy in enemies)
         {
@@ -49,7 +49,7 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Reflected shot movement is handled in Update — ignore all triggers
+
         if (isReflected)
         {
             if (collision.CompareTag("Environment"))
@@ -57,7 +57,7 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        // ── Normal shot hitting the player ────────────────────────────────
+  
         if (collision.CompareTag("Player"))
         {
             PlayerInputActions inputActions = collision.GetComponent<PlayerInputActions>();
@@ -84,7 +84,7 @@ public class Projectile : MonoBehaviour
     {
         isReflected = true;
 
-        // Aim at nearest enemy
+  
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         Transform target = null;
         float closest = float.MaxValue;

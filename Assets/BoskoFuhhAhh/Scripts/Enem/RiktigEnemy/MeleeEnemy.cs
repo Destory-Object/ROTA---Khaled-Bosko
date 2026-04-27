@@ -53,6 +53,8 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
     {
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
+        if (rb != null)
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX;
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
@@ -125,7 +127,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
         }
     }
 
-    // ── ILaunchable ────────────────────────────────────────────────────────
+    //ILaunchable
     public void Launch(Vector2 force)
     {
         if (state == State.Dead) return;
@@ -177,7 +179,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
         state = State.Chasing;
     }
 
-    // ── Chase & Attack ─────────────────────────────────────────────────────
+    //Chase & Attack
     private void ChasePlayer(float dist)
     {
         bool inStopZone = dist <= stopDistance;
@@ -213,13 +215,16 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
 
             if (playerInputActions != null && playerInputActions.IsParrying())
             {
+
                 animator?.SetBool("isAttacking", false);
                 ShowWarning(false);
                 ResetSpriteColor();
                 StartCoroutine(ParryStunRoutine());
                 yield break;
             }
-            yield return null;
+            if (playerInputActions != null && playerInputActions.IsParrying() && playerInputActions.IsFacing(transform.position))
+
+                yield return null;
         }
 
         ShowWarning(false);
@@ -265,7 +270,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
             state = State.Chasing;
     }
 
-    // ── Telegraph ──────────────────────────────────────────────────────────
+    //Telegraph
     private void ShowWarning(bool show)
     {
         if (warningIndicator != null)
@@ -292,7 +297,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
             spriteRenderer.color = originalColor;
     }
 
-    // ── Parry stun ─────────────────────────────────────────────────────────
+    //Parry stun
     private IEnumerator ParryStunRoutine()
     {
         state = State.Stunned;
@@ -310,7 +315,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
         state = State.Chasing;
     }
 
-    // ── IHealth ────────────────────────────────────────────────────────────
+    //IHealth
     public void TakeDamage(int amount)
     {
         if (state == State.Dead) return;

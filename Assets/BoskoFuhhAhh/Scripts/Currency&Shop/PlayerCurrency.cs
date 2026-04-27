@@ -19,6 +19,6 @@ public class PlayerCurrency
         }
         Amount += amount;
 
-        text.text = $"Current currency: {Amount} funny point";
+        text.text = $"Current currency: {Amount}";
     }
 }

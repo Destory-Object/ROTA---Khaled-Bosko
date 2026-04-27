@@ -11,6 +11,7 @@ public class PlayerDamageReceiver : MonoBehaviour, IHealth
 
     private PlayerInputActions inputActions;
     Animator ani;
+    
 
     private void Start()
     {
@@ -31,6 +32,7 @@ public class PlayerDamageReceiver : MonoBehaviour, IHealth
         {
             playerCurrentHealth -= damage;
             ani.SetTrigger("Camera_SoftShake");
+            ani.SetTrigger("Player_Damage");
             Debug.Log("Player took damage, current health: " + playerCurrentHealth);
             if (playerCurrentHealth <= 0)
             {
