@@ -21,6 +21,8 @@ public class PlayerInputActions : MonoBehaviour, IContract
     private Vector2 attackOffsetUnder = new Vector2(0f, -1f);
     private Rigidbody2D playerRb;
 
+    [SerializeField] private TrailRenderer attackTrail;
+
     private void Start()
     {
         parryAction = InputSystem.actions.FindAction("Parry");
@@ -70,19 +72,25 @@ public class PlayerInputActions : MonoBehaviour, IContract
 
     private void Attack()
     {
+        StartCoroutine(ShowTrail());
+
         Collider2D[] hitEnemies = AttackUtilities.DetectEnemies(
             attackPoint.position, attackRange, enemyLayers);
 
         foreach (Collider2D enemy in hitEnemies)
         {
-            Debug.Log("We hit " + enemy.name);
             IHealth healthComp = enemy.GetComponent<IHealth>();
             if (healthComp != null)
-                //Uses CombatEffects for crit rolls + popup
                 CombatEffects.DealDamage(healthComp, damageAmount, enemy.transform.position);
         }
     }
 
+    private IEnumerator ShowTrail()
+    {
+        attackTrail.emitting = true;
+        yield return new WaitForSeconds(0.15f);
+        attackTrail.emitting = false;
+    }
     private IEnumerator ParryRoutine()
     {
         isParrying = true;

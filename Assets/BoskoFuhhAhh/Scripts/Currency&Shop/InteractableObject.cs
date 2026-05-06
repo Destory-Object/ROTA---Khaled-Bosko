@@ -27,6 +27,7 @@ public class InteractableObject : MonoBehaviour, IInteractable
             Debug.Log("Triggering interact animation");
             animator.SetTrigger(interactAnimationTrigger);
             player.playerCurrency.AddCurrency(rewardAmount);
+            Debug.Log("Give currency?");
             GetComponent<Collider2D>().enabled = false;
         }
     }
