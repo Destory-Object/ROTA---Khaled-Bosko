@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
 
 public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
 {
@@ -36,6 +37,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
     [SerializeField] private GameObject warningIndicator;
     [SerializeField] private Color windupColor = Color.red;
     [SerializeField] private float flashSpeed = 8f;
+    float windupTimer = 0f;
 
     private enum State { Idle, Chasing, WindingUp, Attacking, Stunned, Launched, Dead }
     private State state = State.Idle;
@@ -54,7 +56,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
         currentHealth = maxHealth;
         rb = GetComponent<Rigidbody2D>();
         if (rb != null)
-            rb.constraints = RigidbodyConstraints2D.FreezeRotation | RigidbodyConstraints2D.FreezePositionX;
+            rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
@@ -72,6 +74,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
         }
     }
 
+    
     private void Update()
     {
         if (state == State.Dead) return;
@@ -92,7 +95,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
                 break;
 
             case State.Launched:
-                // Check if enemy has landed back on the ground
+              
                 if (rb.linearVelocityY <= 0.05f && rb.linearVelocityY >= -0.5f && !IsAirborne())
                     LandFromLaunch();
                 break;
@@ -105,7 +108,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
             || state == State.WindingUp || state == State.Attacking
             || state == State.Launched)
         {
-            // Launched state: only freeze X so the enemy arcs naturally through the air
+            
             if (state == State.Launched)
                 return;
 
@@ -138,24 +141,21 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
 
         state = State.Launched;
 
-        // Switch to dynamic so gravity and physics apply during the launch arc
         rb.bodyType = RigidbodyType2D.Dynamic;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         rb.linearVelocity = force;
 
         animator?.SetBool("isWalking", false);
         animator?.SetBool("isAttacking", false);
-        animator?.SetTrigger("isLaunched");     // Optional: add this trigger to your animator
+        animator?.SetTrigger("isLaunched");    
 
         Debug.Log($"{name} launched into the air!");
     }
 
     private bool IsAirborne()
     {
-        // Small downward raycast to check if grounded
-        RaycastHit2D hit = Physics2D.Raycast(
-            transform.position, Vector2.down, 0.6f,
-            ~LayerMask.GetMask("Enemies", "Player")); // ignore enemy and player layers
+
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.6f,~LayerMask.GetMask("Enemies", "Player"));
         return hit.collider == null;
     }
 
@@ -164,7 +164,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
         state = State.Stunned;
         rb.linearVelocity = Vector2.zero;
 
-        // Briefly stun on landing — lets the player feel the impact
+        
         StartCoroutine(LandStunRoutine());
     }
 
@@ -179,7 +179,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
         state = State.Chasing;
     }
 
-    //Chase & Attack
+    
     private void ChasePlayer(float dist)
     {
         bool inStopZone = dist <= stopDistance;
@@ -196,7 +196,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
         {
             lastAttackTime = Time.time;
             state = State.WindingUp;
-            StartCoroutine(AttackRoutine());
+            StartCoroutine(AttackRoutine()); 
         }
     }
 
@@ -213,18 +213,17 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
         {
             windupTimer += Time.deltaTime;
 
-            if (playerInputActions != null && playerInputActions.IsParrying())
+            if (playerInputActions != null && playerInputActions.IsParrying()
+                && playerInputActions.IsFacing(transform.position))
             {
-
                 animator?.SetBool("isAttacking", false);
                 ShowWarning(false);
                 ResetSpriteColor();
                 StartCoroutine(ParryStunRoutine());
                 yield break;
             }
-            if (playerInputActions != null && playerInputActions.IsParrying() && playerInputActions.IsFacing(transform.position))
 
-                yield return null;
+            yield return null;
         }
 
         ShowWarning(false);
@@ -245,7 +244,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
 
             foreach (Collider2D hit in hits)
             {
-                if (playerInputActions != null && playerInputActions.IsParrying())
+                if (playerInputActions != null && playerInputActions.IsParrying()&& playerInputActions.IsFacing(transform.position))
                 {
                     animator?.SetBool("isAttacking", false);
                     StartCoroutine(ParryStunRoutine());
@@ -255,7 +254,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
                 IHealth health = hit.GetComponent<IHealth>();
                 if (health != null)
                 {
-                    health.TakeDamage(attackDamage);
+                    health.TakeDamage(attackDamage, transform.position);
                     hitLanded = true;
                 }
             }
@@ -263,6 +262,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
             activeTimer += Time.deltaTime;
             yield return null;
         }
+
 
         animator?.SetBool("isAttacking", false);
 
@@ -316,11 +316,11 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
     }
 
     //IHealth
-    public void TakeDamage(int amount)
+    public void TakeDamage(int amount, Vector2 sourcePosition = default)
     {
         if (state == State.Dead) return;
         currentHealth -= amount;
-        Debug.Log($"{name} took {amount} damage. HP: {currentHealth}/{maxHealth}");
+        StartCoroutine(StaggerRoutine());
         if (currentHealth <= 0) Die();
     }
 
@@ -332,7 +332,10 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
 
     private void Die()
     {
+
+
         state = State.Dead;
+        GetComponent<ScanEnemy>()?.OnEnemyDied();
         StopAllCoroutines();
         ShowWarning(false);
         ResetSpriteColor();
@@ -355,7 +358,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
         Destroy(gameObject, 3f);
     }
 
-    // ── IInteractable ──────────────────────────────────────────────────────
+    //IInteractable
     public void Interact()
     {
         switch (state)
@@ -372,6 +375,25 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
                 Debug.Log($"{name} growls at you.");
                 break;
         }
+    }
+
+    private IEnumerator StaggerRoutine()
+    {
+        State previousState = state;
+        state = State.Stunned;
+
+        rb.linearVelocityX = 0f;
+
+        if (spriteRenderer != null)
+            spriteRenderer.color = Color.red;
+
+        yield return new WaitForSeconds(0.15f);
+
+        if (spriteRenderer != null)
+            spriteRenderer.color = originalColor;
+
+        if (state != State.Dead)
+            state = previousState;
     }
 
     private void OnDrawGizmosSelected()

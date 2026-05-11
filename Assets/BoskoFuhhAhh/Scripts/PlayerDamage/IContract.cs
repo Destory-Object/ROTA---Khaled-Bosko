@@ -11,7 +11,7 @@ public interface IContract
 public interface IHealth
 {
     public void RegenHealth(int amount);
-    public void TakeDamage(int amount);
+    public void TakeDamage(int amount, Vector2 sourcePosition = default);
     public int GetHealth();
     public void Kill();
 }

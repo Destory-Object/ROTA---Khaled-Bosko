@@ -76,6 +76,7 @@ GameObject:
   - component: {fileID: 7140280832080196448}
   - component: {fileID: 789772156062085363}
   - component: {fileID: 7660525542301655604}
+  - component: {fileID: -6430972860164903946}
   m_Layer: 3
   m_Name: MeleEnemy
   m_TagString: Enemy
@@ -103,6 +104,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &2623713615309862715
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -148,6 +150,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -157,7 +160,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!70 &2288588169454358493
 CapsuleCollider2D:
@@ -278,6 +280,21 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-6430972860164903946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4839133843373020498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26884fef714b18541b40a9b7e492db82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScanEnemy
+  minCurrency: 10
+  maxCurrency: 120
+  successChance: 0.7
 --- !u!1 &7204911306388586219
 GameObject:
   m_ObjectHideFlags: 0

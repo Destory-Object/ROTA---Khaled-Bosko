@@ -3,13 +3,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-///   2. Inside it add a background Image and a fill Image (the bar)
-///   3. Attach this script to the Canvas, assign the fill Image to healthFill
-///   4. Position it above the enemy's head using yOffset
 public class EnemyHealthBar : MonoBehaviour
 {
-    [SerializeField] private Image healthFill;              //The colored fill bar Image
-    [SerializeField] private float yOffset = 1.5f;         //How far above the enemy
+    [SerializeField] private Image healthFill;              
+    [SerializeField] private float yOffset = 1.5f;         
 
     [Header("Colors")]
     [SerializeField] private Color fullHealthColor = Color.green;
@@ -34,10 +31,10 @@ public class EnemyHealthBar : MonoBehaviour
         if (canvasGroup == null)
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
 
-        //Cache max health on start
+
         maxHealth = enemyHealth != null ? enemyHealth.GetHealth() : 1;
 
-        //Hide bar at start unless always visible
+
         if (!alwaysVisible)
             canvasGroup.alpha = 0f;
 
@@ -46,12 +43,12 @@ public class EnemyHealthBar : MonoBehaviour
 
     private void LateUpdate()
     {
-        //Keep bar above the enemy, ignore enemy rotation
+
         transform.position = enemyTransform.position + Vector3.up * yOffset;
         transform.rotation = Quaternion.identity;   // Always face camera
     }
 
-    ///Call this from TakeDamage to refresh the bar
+
     public void OnDamageTaken()
     {
         UpdateBar();

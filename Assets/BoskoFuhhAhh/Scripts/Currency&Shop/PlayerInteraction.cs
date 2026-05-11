@@ -18,23 +18,25 @@ public class PlayerInteraction : MonoBehaviour
 
     private void Update()
     {
-        if(scanAction.WasPerformedThisFrame())
+        if (scanAction.WasPerformedThisFrame())
         {
             if (currentInteractable != null)
             {
-                currentInteractable.GetComponent<IInteractable>().Interact();   
+                currentInteractable.GetComponent<IInteractable>()?.Interact();
+                currentInteractable = null;
             }
         }
     }
 
-   
-  
+
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Interactable"))
         {
             currentInteractable = collision.gameObject;
+            Debug.Log("Found interactable: " + collision.gameObject.name);
         }
     }
 

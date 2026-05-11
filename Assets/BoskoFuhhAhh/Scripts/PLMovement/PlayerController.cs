@@ -110,6 +110,8 @@ public class PlayerController : MonoBehaviour
         }
     }
     private void FixedUpdate() {
+        
+        if (GetComponent<PlayerDamageReceiver>().isKnockedBack) return;
 
         if (playerState == "parryState" || inputActions.IsParrying())
         {

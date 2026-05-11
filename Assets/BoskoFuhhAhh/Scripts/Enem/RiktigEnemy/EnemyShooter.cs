@@ -11,6 +11,10 @@ public class EnemyShooter : MonoBehaviour, IHealth, ILaunchable
     public Animator animator;
     public string shootAnimationTrigger = "Shoot";
 
+    private SpriteRenderer spriteRenderer;
+    private Color originalColor;
+    private bool isStaggered = false;
+
     [Header("Detection")]
     public float detectionRange = 7f;
 
@@ -41,12 +45,15 @@ public class EnemyShooter : MonoBehaviour, IHealth, ILaunchable
 
         if (animator == null)
             animator = GetComponent<Animator>();
+
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+            originalColor = spriteRenderer.color;
     }
 
     private void Update()
     {
-        if (playerTransform == null || isLaunched) return;
-
+        if (playerTransform == null || isLaunched || isStaggered) return;
         float dist = Vector2.Distance(transform.position, playerTransform.position);
 
         HandleMovement(dist);
@@ -97,7 +104,7 @@ public class EnemyShooter : MonoBehaviour, IHealth, ILaunchable
     {
         isLaunched = true;
 
-        //Must be Dynamic before applying force
+       
         rb.bodyType = RigidbodyType2D.Dynamic;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         rb.linearVelocity = Vector2.zero;
@@ -112,13 +119,13 @@ public class EnemyShooter : MonoBehaviour, IHealth, ILaunchable
 
     private IEnumerator LandRoutine()
     {
-        //Wait until moving upward is done then wait to land
+
         yield return new WaitForSeconds(0.3f);
 
         while (rb.linearVelocity.y > -0.1f || IsAirborne())
             yield return null;
 
-        //Landed — re-freeze horizontal so player can't push it again
+
         rb.linearVelocity = Vector2.zero;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         isLaunched = false;
@@ -154,10 +161,27 @@ public class EnemyShooter : MonoBehaviour, IHealth, ILaunchable
             projectileComp.damageAmount = 1;
     }
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(int amount, Vector2 sourcePosition = default)
     {
         currentHealth -= amount;
+        StartCoroutine(StaggerRoutine());
         if (currentHealth <= 0) Die();
+    }
+
+    private IEnumerator StaggerRoutine()
+    {
+        isStaggered = true;
+        rb.linearVelocityX = 0f;
+
+        if (spriteRenderer != null)
+            spriteRenderer.color = Color.red;
+
+        yield return new WaitForSeconds(0.15f);
+
+        if (spriteRenderer != null)
+            spriteRenderer.color = originalColor;
+
+        isStaggered = false;
     }
 
     public int GetHealth() => currentHealth;
@@ -167,6 +191,7 @@ public class EnemyShooter : MonoBehaviour, IHealth, ILaunchable
 
     private void Die()
     {
+        GetComponent<ScanEnemy>()?.OnEnemyDied();
         if (interactablePrefab != null && spawnPoint != null)
             Instantiate(interactablePrefab, spawnPoint.position, Quaternion.identity);
         else if (interactablePrefab != null)

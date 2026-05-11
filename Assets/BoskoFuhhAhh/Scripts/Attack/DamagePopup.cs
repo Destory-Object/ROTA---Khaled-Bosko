@@ -2,10 +2,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
-/// SETUP:
-///   1. Create a new GameObject, add this script + a TextMeshPro component
-///   2. Add a Canvas component set to World Space on the same GameObject
-///   3. Save as a prefab and assign to CombatEffects.damagePopupPrefab
+
 public class DamagePopup : MonoBehaviour
 {
     [SerializeField] private TextMeshPro text;
@@ -16,7 +13,7 @@ public class DamagePopup : MonoBehaviour
 
     [Header("Crit Hit")]
     [SerializeField] private Color critColor = Color.yellow;
-    [SerializeField] private float critFontSize = 6f;      //Crits appear bigger
+    [SerializeField] private float critFontSize = 6f;      
 
     [Header("Animation")]
     [SerializeField] private float floatSpeed = 2f;
@@ -33,7 +30,7 @@ public class DamagePopup : MonoBehaviour
             text.text = $"CRIT! {damage}";
             text.color = critColor;
             text.fontSize = critFontSize;
-            transform.localScale = Vector3.one * 1.3f;  //Pop a bit bigger on crit
+            transform.localScale = Vector3.one * 1.3f; 
         }
         else
         {

@@ -6,17 +6,13 @@ public class InteractableObject : MonoBehaviour, IInteractable
     public string interactAnimationTrigger = "Interact";
     public int rewardAmount = 10;
     private bool hasInteracted = false;
-
     PlayerController player;
 
     private void Start()
     {
         player = FindAnyObjectByType<PlayerController>();
-
         if (animator == null)
-        {
             animator = GetComponent<Animator>();
-        }
     }
 
     public void Interact()
@@ -24,10 +20,11 @@ public class InteractableObject : MonoBehaviour, IInteractable
         if (!hasInteracted)
         {
             hasInteracted = true;
-            Debug.Log("Triggering interact animation");
-            animator.SetTrigger(interactAnimationTrigger);
+
+            if (animator != null)
+                animator.SetTrigger(interactAnimationTrigger);
+
             player.playerCurrency.AddCurrency(rewardAmount);
-            Debug.Log("Give currency?");
             GetComponent<Collider2D>().enabled = false;
         }
     }

@@ -2,10 +2,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// SETUP:
 ///   1. Attach to the Player alongside PlayerController
 ///   2. Set climbableLayers to your Ground/Environment layer
-///   3. No child GameObjects needed TACK SÅ MYCKET CLAUDE
+///   3. No child GameObjects needed 
 
 public class LedgeGrab : MonoBehaviour
 {
@@ -52,7 +51,7 @@ public class LedgeGrab : MonoBehaviour
         Vector2 upperBody = (Vector2)transform.position + new Vector2(0f, 0.4f);
         Vector2 wallCheckCenter = upperBody + new Vector2(facing * (wallCheckWidth * 0.5f), 0f);
 
-        // Wall at upper body level
+        
         bool wallHit = Physics2D.OverlapBox(
             wallCheckCenter,
             new Vector2(wallCheckWidth, wallCheckHeight),
@@ -60,13 +59,13 @@ public class LedgeGrab : MonoBehaviour
 
         if (!wallHit) return;
 
-        // Open air above the ledge
+        
         Vector2 aboveLedge = upperBody + new Vector2(facing * wallCheckWidth, wallCheckHeight * 0.5f + 0.1f);
         bool topOpen = !Physics2D.OverlapCircle(aboveLedge, ledgeTopCheckSize, climbableLayers);
 
         if (!topOpen) return;
 
-        // Ledge found — mantle immediately, no input needed
+        
         RaycastHit2D surface = Physics2D.Raycast(
             aboveLedge + Vector2.up * 0.3f, Vector2.down, 1f, climbableLayers);
 

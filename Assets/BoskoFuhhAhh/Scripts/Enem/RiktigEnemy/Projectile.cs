@@ -57,20 +57,18 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-  
         if (collision.CompareTag("Player"))
         {
             PlayerInputActions inputActions = collision.GetComponent<PlayerInputActions>();
             if (inputActions != null && inputActions.IsParrying())
             {
-                Debug.Log("Projectile reflected!");
                 ReflectAtEnemy();
                 return;
             }
 
             IHealth health = collision.GetComponent<IHealth>();
             if (health != null)
-                health.TakeDamage(damageAmount);
+                health.TakeDamage(damageAmount, transform.position); // change this line
 
             Destroy(gameObject);
         }

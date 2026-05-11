@@ -48,10 +48,8 @@ public class PlayerShotgun : MonoBehaviour
 
         for (int i = 0; i < pelletsPerShot; i++)
         {
-            // Spread pellets evenly across the spread angle
             float t = pelletsPerShot == 1 ? 0.5f : (float)i / (pelletsPerShot - 1);
             float angle = Mathf.Lerp(-spreadAngle / 2f, spreadAngle / 2f, t);
-
             Vector2 direction = RotateVector(baseDirection, angle);
 
             GameObject pellet = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
@@ -59,12 +57,13 @@ public class PlayerShotgun : MonoBehaviour
             if (pelletRb != null)
                 pelletRb.linearVelocity = direction * projectileSpeed;
 
-            Projectile projectileComp = pellet.GetComponent<Projectile>();
+            PlayerProjectile projectileComp = pellet.GetComponent<PlayerProjectile>();
             if (projectileComp != null)
                 projectileComp.damageAmount = damagePerPellet;
         }
 
-        // Knockback pushes player back on shot
+        
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y);
         rb.AddForce(new Vector2(-facing * knockbackForce, 0f), ForceMode2D.Impulse);
 
         StartCoroutine(HitStop());

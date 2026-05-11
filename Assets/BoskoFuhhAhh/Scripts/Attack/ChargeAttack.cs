@@ -31,10 +31,10 @@ public class ChargeAttack : MonoBehaviour
 
     private void Update()
     {
-        //Only active while player is dashing
+
         if (pc.playerState != "Dashing")
         {
-            hitLanded = false;  //Reset so the next dash can hit again
+            hitLanded = false;
             return;
         }
 
@@ -80,19 +80,19 @@ public class ChargeAttack : MonoBehaviour
 
             Debug.Log($"Charge hit! Crit: {isCrit} | Damage: {damage}");
 
-            //hit stoop
+            
             StartCoroutine(HitStop());
 
             hitLanded = true;
             lastChargeTime = Time.time;
 
-            //End dash right after connecting so player doesnt fly past
+            
             pc.playerState = "Normal";
             break;
         }
     }
 
-    //Freezes time briefly on hit — makes the impact feel heavy
+    
     private IEnumerator HitStop()
     {
         Time.timeScale = 0f;

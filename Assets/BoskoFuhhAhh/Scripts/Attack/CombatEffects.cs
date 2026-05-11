@@ -28,7 +28,7 @@ public class CombatEffects : MonoBehaviour
 
         target.TakeDamage(finalDamage);
 
-        //Notify health bar if one exists on the target
+        //Notify health bar
         MonoBehaviour targetMono = target as MonoBehaviour;
         if (targetMono != null)
         {
