@@ -5,7 +5,7 @@ public class ScanEnemy : MonoBehaviour, IInteractable
     [Header("Scan")]
     [SerializeField] private int minCurrency = 10;
     [SerializeField] private int maxCurrency = 120;
-    [SerializeField] private float successChance = 0.7f; // 70% chance of getting data
+    [SerializeField] private float successChance = 0.7f;
 
     private bool hasBeenScanned = false;
     private bool isDead = false;
@@ -15,8 +15,6 @@ public class ScanEnemy : MonoBehaviour, IInteractable
     {
         player = FindAnyObjectByType<PlayerController>();
     }
-
-    // Call this from the enemy Die() method
     public void OnEnemyDied()
     {
         isDead = true;

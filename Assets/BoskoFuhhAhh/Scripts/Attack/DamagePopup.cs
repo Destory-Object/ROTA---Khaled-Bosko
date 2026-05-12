@@ -49,10 +49,10 @@ public class DamagePopup : MonoBehaviour
 
         while (timer < lifetime)
         {
-            //Float upward
+
             transform.position += Vector3.up * floatSpeed * Time.deltaTime;
 
-            //Fade out in the second half of lifetime
+  
             float fadeT = Mathf.Clamp01((timer - lifetime * 0.5f) / (lifetime * 0.5f));
             text.color = new Color(startColor.r, startColor.g, startColor.b, 1f - fadeT);
 

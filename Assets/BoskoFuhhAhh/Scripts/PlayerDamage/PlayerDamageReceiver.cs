@@ -7,7 +7,7 @@ public class PlayerDamageReceiver : MonoBehaviour, IHealth
     public int playerCurrentHealth;
 
     [Header("Invincibility Frames")]
-    [SerializeField] private float iFrameDuration = 1f;
+    [SerializeField] private float iFrameDuration = 0.5f;
     [SerializeField] private float flashSpeed = 10f;
     private bool isInvincible = false;
     private Coroutine iFrameCoroutine;
