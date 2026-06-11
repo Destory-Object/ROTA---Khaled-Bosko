@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,28 +18,72 @@ public class PlayerShotgun : MonoBehaviour
     [SerializeField] private TrailRenderer trail;
     [SerializeField] private float knockbackForce = 5f;
 
-    private InputAction attackAction;
     private PlayerController pc;
+    private WeaponManager weaponManager;
     private Rigidbody2D rb;
     private float lastFireTime = -99f;
+
+    private Dictionary<IHealth, int> pendingDamage = new Dictionary<IHealth, int>();
+    private Dictionary<IHealth, Vector3> pendingPositions = new Dictionary<IHealth, Vector3>();
+    private bool collectingHits = false;
 
     private void Awake()
     {
         pc = GetComponent<PlayerController>();
+        weaponManager = GetComponent<WeaponManager>();
         rb = GetComponent<Rigidbody2D>();
-        attackAction = InputSystem.actions.FindAction("Attack");
     }
 
     private void Update()
     {
-        if (attackAction.WasPressedThisFrame() && pc.playerState == "Normal")
+        if (pc.playerState != "Normal") return;
+        if (Time.time < lastFireTime + fireRate) return;
+
+        InputAction slotAction = GetSlotAction();
+        if (slotAction != null && slotAction.WasPressedThisFrame())
         {
-            if (Time.time >= lastFireTime + fireRate)
-            {
-                Shoot();
-                lastFireTime = Time.time;
-            }
+            Shoot();
+            lastFireTime = Time.time;
         }
+    }
+
+    private InputAction GetSlotAction()
+    {
+        if (weaponManager.slotOne == WeaponType.Shotgun)
+            return InputSystem.actions.FindAction("SlotOne");
+        if (weaponManager.slotTwo == WeaponType.Shotgun)
+            return InputSystem.actions.FindAction("SlotTwo");
+        return null;
+    }
+
+    public void RegisterHit(IHealth target, int damage, Vector3 position)
+    {
+        if (pendingDamage.ContainsKey(target))
+            pendingDamage[target] += damage;
+        else
+        {
+            pendingDamage[target] = damage;
+            pendingPositions[target] = position;
+        }
+
+        if (!collectingHits)
+            StartCoroutine(FlushHits());
+    }
+
+    private IEnumerator FlushHits()
+    {
+        collectingHits = true;
+        yield return new WaitForSeconds(0.15f);
+
+        foreach (var kvp in pendingDamage)
+        {
+            if (kvp.Key != null)
+                CombatEffects.DealDamage(kvp.Key, kvp.Value, pendingPositions[kvp.Key]);
+        }
+
+        pendingDamage.Clear();
+        pendingPositions.Clear();
+        collectingHits = false;
     }
 
     private void Shoot()
@@ -59,13 +104,13 @@ public class PlayerShotgun : MonoBehaviour
 
             PlayerProjectile projectileComp = pellet.GetComponent<PlayerProjectile>();
             if (projectileComp != null)
+            {
                 projectileComp.damageAmount = damagePerPellet;
+                projectileComp.shotgun = this;
+            }
         }
 
-        
-        rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y);
         rb.AddForce(new Vector2(-facing * knockbackForce, 0f), ForceMode2D.Impulse);
-
         StartCoroutine(HitStop());
     }
 

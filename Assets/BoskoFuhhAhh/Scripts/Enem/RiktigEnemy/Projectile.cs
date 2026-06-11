@@ -17,6 +17,7 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float lightFadeSpeed = 8f;
 
     private bool isReflected = false;
+    private bool hasHit = false;
     private Rigidbody2D rb;
 
     private void Awake()
@@ -26,21 +27,21 @@ public class Projectile : MonoBehaviour
 
     private void Update()
     {
-   
-        if (!isReflected) return;
 
-  
+        if (!isReflected || hasHit) return;
+
+
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach (GameObject enemy in enemies)
         {
             float dist = Vector2.Distance(transform.position, enemy.transform.position);
             if (dist <= reflectHitRadius)
             {
+                hasHit = true;
                 Debug.Log("Reflected shot hit: " + enemy.name);
                 IHealth health = enemy.GetComponent<IHealth>();
                 if (health != null)
-                    health.TakeDamage(damageAmount);
-
+                    CombatEffects.DealDamage(health, damageAmount, enemy.transform.position, forceCrit: true); // was: health.TakeDamage(damageAmount)
                 StartCoroutine(ParryEffect(destroyAfter: true));
                 return;
             }

@@ -11,6 +11,13 @@ public class WeaponPickup : MonoBehaviour, IInteractable
         Invoke(nameof(EnablePickup), pickupDelay);
     }
 
+    public void SetPickupDelay(float delay)
+    {
+        canPickUp = false;
+        CancelInvoke(nameof(EnablePickup));
+        Invoke(nameof(EnablePickup), delay);
+    }
+
     private void EnablePickup()
     {
         canPickUp = true;
@@ -21,10 +28,10 @@ public class WeaponPickup : MonoBehaviour, IInteractable
         if (!canPickUp) return;
 
         WeaponManager weaponManager = FindAnyObjectByType<WeaponManager>();
-        if (weaponManager != null)
-        {
-            weaponManager.PickUp(weaponType);
-            Destroy(gameObject);
-        }
+        if (weaponManager == null) return;
+
+        GetComponent<Collider2D>().enabled = false;
+        weaponManager.PickUp(weaponType);
+        Destroy(gameObject);
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -11,40 +12,40 @@ public class PlayerSword : MonoBehaviour
 
     [Header("Trail")]
     [SerializeField] private TrailRenderer attackTrail;
+    [SerializeField] private SwordSlashEffect slashEffect;
 
-    private InputAction attackAction;
     private PlayerController pc;
+    private WeaponManager weaponManager;
 
     private void Awake()
     {
         pc = GetComponent<PlayerController>();
-        attackAction = InputSystem.actions.FindAction("Attack");
-
+        weaponManager = GetComponent<WeaponManager>();
         if (attackTrail != null)
             attackTrail.emitting = false;
     }
 
-    private void OnEnable()
+    private void Update()
     {
-        attackAction.performed += OnAttackPerformed;
-    }
+        if (pc.playerState != "Normal") return;
 
-    private void OnDisable()
-    {
-        attackAction.performed -= OnAttackPerformed;
-
-        if (attackTrail != null)
-            attackTrail.emitting = false;
-    }
-
-    private void OnAttackPerformed(UnityEngine.InputSystem.InputAction.CallbackContext ctx)
-    {
-        if (pc.playerState == "Normal")
+        InputAction slotAction = GetSlotAction();
+        if (slotAction != null && slotAction.WasPressedThisFrame())
             Attack();
+    }
+
+    private InputAction GetSlotAction()
+    {
+        if (weaponManager.slotOne == WeaponType.Sword)
+            return InputSystem.actions.FindAction("SlotOne");
+        if (weaponManager.slotTwo == WeaponType.Sword)
+            return InputSystem.actions.FindAction("SlotTwo");
+        return null;
     }
 
     private void Attack()
     {
+        slashEffect?.PlaySlash();
         StartCoroutine(ShowTrail());
 
         Collider2D[] hitEnemies = AttackUtilities.DetectEnemies(
@@ -58,7 +59,7 @@ public class PlayerSword : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator ShowTrail()
+    private IEnumerator ShowTrail()
     {
         if (attackTrail != null)
         {

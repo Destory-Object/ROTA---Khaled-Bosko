@@ -48,7 +48,7 @@ public class PlayerPogo : MonoBehaviour
 
     void TestPogo()
     {
-        Collider2D[] hitEnemies = AttackUtilities.DetectEnemies(pogoAttackPoint.position, pogoAttackRange, enemies);    
+        Collider2D[] hitEnemies = AttackUtilities.DetectEnemies(pogoAttackPoint.position, pogoAttackRange, enemies);
         if (hitEnemies.Length > 0)
         {
             Debug.Log("Enemy layer detected");
@@ -65,21 +65,16 @@ public class PlayerPogo : MonoBehaviour
 
                     if (enemyHealth != null)
                     {
-                        //anim = enemyPatrol.gameObject.GetComponent<Animator>();
-                        enemyHealth.TakeDamage(damageAmount);
-                        //anim.SetTrigger("Damage");  //Fixa här
-                        //playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, bounceForce);
+                        CombatEffects.DealDamage(enemyHealth, damageAmount, enemies.transform.position);
                         playerRb.AddForceY(bounceForce, ForceMode2D.Impulse);
-                        Debug.Log("bounce Applied");
                     }
-                }
 
-                //playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, bounceForce);
-                //Debug.Log("bounce Applied");
+                    //playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, bounceForce);
+                    //Debug.Log("bounce Applied");
+                }
             }
         }
     }
-
     private void OnDrawGizmosSelected()
     {
         if (pogoAttackPoint == null)

@@ -3,6 +3,8 @@ using UnityEngine;
 public class PlayerProjectile : MonoBehaviour
 {
     public int damageAmount = 1;
+    public PlayerShotgun shotgun; 
+
     [SerializeField] private float lifetime = 3f;
 
     private void Start()
@@ -16,8 +18,12 @@ public class PlayerProjectile : MonoBehaviour
         {
             IHealth health = collision.GetComponent<IHealth>();
             if (health != null)
-                health.TakeDamage(damageAmount);
-
+            {
+                if (shotgun != null)
+                    shotgun.RegisterHit(health, damageAmount, collision.transform.position);
+                else
+                    CombatEffects.DealDamage(health, damageAmount, collision.transform.position);
+            }
             Destroy(gameObject);
         }
         else if (collision.CompareTag("Environment"))

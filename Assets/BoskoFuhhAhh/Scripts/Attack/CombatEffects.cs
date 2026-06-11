@@ -42,6 +42,8 @@ public class CombatEffects : MonoBehaviour
 
     private void SpawnPopup(int damage, bool isCrit, Vector3 position)
     {
+        Debug.Log($"Spawning popup at {position}, damage: {damage}");
+        Debug.Log($"SpawnPopup called — prefab null: {damagePopupPrefab == null}");
         if (damagePopupPrefab == null) return;
 
         //Randomise position slightly so multiple hits don't stack

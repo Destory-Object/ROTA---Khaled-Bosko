@@ -295,6 +295,7 @@ MonoBehaviour:
   minCurrency: 10
   maxCurrency: 120
   successChance: 0.7
+  scanPopupPrefab: {fileID: 72851903415315946, guid: 82028a208cbadad4aa545fec0118b342, type: 3}
 --- !u!1 &7204911306388586219
 GameObject:
   m_ObjectHideFlags: 0

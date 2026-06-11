@@ -10,11 +10,7 @@ public class ChargeAttack : MonoBehaviour
 
     [Header("Launch")]
     [SerializeField] private float launchForceUp = 12f;         
-    [SerializeField] private float launchForceBack = 4f;       
-
-    [Header("Crit")]
-    [SerializeField] private float critChance = 0.25f;          
-    [SerializeField] private float critMultiplier = 2f;        
+    [SerializeField] private float launchForceBack = 4f;           
 
     [Header("Charge Feel")]
     [SerializeField] private float hitStopDuration = 0.08f;     
@@ -48,7 +44,6 @@ public class ChargeAttack : MonoBehaviour
     {
         Collider2D[] hits = AttackUtilities.DetectEnemies(
             transform.position, chargeHitRadius, enemyLayer);
-
         if (hits.Length == 0) return;
 
         foreach (Collider2D hit in hits)
@@ -56,21 +51,14 @@ public class ChargeAttack : MonoBehaviour
             IHealth health = hit.GetComponent<IHealth>();
             if (health == null) continue;
 
-            //crit roll
-            bool isCrit = Random.value <= critChance;
-            int damage = isCrit
-                ? Mathf.RoundToInt(chargeDamage * critMultiplier)
-                : chargeDamage;
+            // Let CombatEffects handle crit — remove the local roll
+            CombatEffects.DealDamage(health, chargeDamage, hit.transform.position); // was: manual crit + health.TakeDamage
 
-            health.TakeDamage(damage);
-
-            //Launch upward
             Rigidbody2D enemyRb = hit.GetComponent<Rigidbody2D>();
             if (enemyRb != null)
             {
                 enemyRb.bodyType = RigidbodyType2D.Dynamic;
                 enemyRb.constraints = RigidbodyConstraints2D.FreezeRotation;
-
                 float knockDir = hit.transform.position.x > transform.position.x ? 1f : -1f;
                 enemyRb.linearVelocity = Vector2.zero;
                 enemyRb.AddForce(
@@ -78,21 +66,15 @@ public class ChargeAttack : MonoBehaviour
                     ForceMode2D.Impulse);
             }
 
-            Debug.Log($"Charge hit! Crit: {isCrit} | Damage: {damage}");
-
-            
             StartCoroutine(HitStop());
-
             hitLanded = true;
             lastChargeTime = Time.time;
-
-            
             pc.playerState = "Normal";
             break;
         }
     }
 
-    
+
     private IEnumerator HitStop()
     {
         Time.timeScale = 0f;

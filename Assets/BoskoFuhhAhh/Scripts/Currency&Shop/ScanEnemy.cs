@@ -7,6 +7,9 @@ public class ScanEnemy : MonoBehaviour, IInteractable
     [SerializeField] private int maxCurrency = 120;
     [SerializeField] private float successChance = 0.7f;
 
+    [Header("Feedback")]
+    [SerializeField] private GameObject scanPopupPrefab;
+
     private bool hasBeenScanned = false;
     private bool isDead = false;
     private PlayerController player;
@@ -15,6 +18,7 @@ public class ScanEnemy : MonoBehaviour, IInteractable
     {
         player = FindAnyObjectByType<PlayerController>();
     }
+
     public void OnEnemyDied()
     {
         isDead = true;
@@ -41,11 +45,20 @@ public class ScanEnemy : MonoBehaviour, IInteractable
         {
             int reward = Random.Range(minCurrency, maxCurrency + 1);
             player.playerCurrency.AddCurrency(reward);
-            Debug.Log($"Scan successful! Recovered {reward} credits.");
+            SpawnPopup(true, reward);
         }
         else
         {
-            Debug.Log("Scan failed — data corrupted.");
+            SpawnPopup(false, 0);
         }
+    }
+
+    private void SpawnPopup(bool success, int amount)
+    {
+        if (scanPopupPrefab == null) return;
+
+        Vector3 spawnPos = transform.position + Vector3.up * 1.5f;
+        GameObject popup = Instantiate(scanPopupPrefab, spawnPos, Quaternion.identity);
+        popup.GetComponent<ScanPopup>()?.Setup(success, amount);
     }
 }

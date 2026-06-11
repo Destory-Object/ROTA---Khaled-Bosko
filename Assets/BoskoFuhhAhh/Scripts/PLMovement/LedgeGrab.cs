@@ -2,10 +2,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-///   1. Attach to the Player alongside PlayerController
-///   2. Set climbableLayers to your Ground/Environment layer
-///   3. No child GameObjects needed 
-
 public class LedgeGrab : MonoBehaviour
 {
     [Header("Detection")]
