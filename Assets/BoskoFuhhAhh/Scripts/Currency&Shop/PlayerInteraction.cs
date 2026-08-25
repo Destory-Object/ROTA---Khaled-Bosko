@@ -10,10 +10,7 @@ public class PlayerInteraction : MonoBehaviour
 
     private void OnEnable()
     {
-
-        scanAction = InputSystem.actions.FindAction("Interact");
-    
-       
+        scanAction = InputSystem.actions.FindAction("Interact");  
     }
 
     private void Update()
@@ -27,10 +24,6 @@ public class PlayerInteraction : MonoBehaviour
             }
         }
     }
-
-
-
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Interactable"))
@@ -44,9 +37,7 @@ public class PlayerInteraction : MonoBehaviour
     {
         if (collision.CompareTag("Interactable"))
         {
-            
-                currentInteractable = null;
-            
+                currentInteractable = null; 
         }
     }
 }

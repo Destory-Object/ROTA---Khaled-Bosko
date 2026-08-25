@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿// CHANGES: added AudioManager.Play("EnemyDeath") in Die().
+using System.Collections;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 
@@ -38,7 +39,6 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
     [SerializeField] private Color windupColor = Color.red;
     [SerializeField] private float flashSpeed = 8f;
     float windupTimer = 0f;
-
     private enum State { Idle, Chasing, WindingUp, Attacking, Stunned, Launched, Dead }
     private State state = State.Idle;
 
@@ -74,7 +74,6 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
         }
     }
 
-    
     private void Update()
     {
         if (state == State.Dead) return;
@@ -95,7 +94,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
                 break;
 
             case State.Launched:
-              
+
                 if (rb.linearVelocityY <= 0.05f && rb.linearVelocityY >= -0.5f && !IsAirborne())
                     LandFromLaunch();
                 break;
@@ -108,7 +107,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
             || state == State.WindingUp || state == State.Attacking
             || state == State.Launched)
         {
-            
+
             if (state == State.Launched)
                 return;
 
@@ -147,15 +146,14 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
 
         animator?.SetBool("isWalking", false);
         animator?.SetBool("isAttacking", false);
-        animator?.SetTrigger("isLaunched");    
+        animator?.SetTrigger("isLaunched");
 
         Debug.Log($"{name} launched into the air!");
     }
 
     private bool IsAirborne()
     {
-
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.6f,~LayerMask.GetMask("Enemies", "Player"));
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, 0.6f, ~LayerMask.GetMask("Enemies", "Player"));
         return hit.collider == null;
     }
 
@@ -164,7 +162,6 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
         state = State.Stunned;
         rb.linearVelocity = Vector2.zero;
 
-        
         StartCoroutine(LandStunRoutine());
     }
 
@@ -179,7 +176,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
         state = State.Chasing;
     }
 
-    
+
     private void ChasePlayer(float dist)
     {
         bool inStopZone = dist <= stopDistance;
@@ -196,7 +193,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
         {
             lastAttackTime = Time.time;
             state = State.WindingUp;
-            StartCoroutine(AttackRoutine()); 
+            StartCoroutine(AttackRoutine());
         }
     }
 
@@ -244,7 +241,7 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
 
             foreach (Collider2D hit in hits)
             {
-                if (playerInputActions != null && playerInputActions.IsParrying()&& playerInputActions.IsFacing(transform.position))
+                if (playerInputActions != null && playerInputActions.IsParrying() && playerInputActions.IsFacing(transform.position))
                 {
                     animator?.SetBool("isAttacking", false);
                     StartCoroutine(ParryStunRoutine());
@@ -262,7 +259,6 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
             activeTimer += Time.deltaTime;
             yield return null;
         }
-
 
         animator?.SetBool("isAttacking", false);
 
@@ -332,8 +328,6 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
 
     private void Die()
     {
-
-
         state = State.Dead;
         GetComponent<ScanEnemy>()?.OnEnemyDied();
         StopAllCoroutines();
@@ -348,6 +342,8 @@ public class MeleeEnemy : MonoBehaviour, IHealth, IInteractable //ILaunchable
         rb.linearVelocity = Vector2.zero;
         rb.bodyType = RigidbodyType2D.Kinematic;
         GetComponent<Collider2D>().enabled = false;
+
+        AudioManager.Play("EnemyDeath");
 
         if (interactablePrefab != null)
         {

@@ -145,10 +145,11 @@ public class WeaponManager : MonoBehaviour
         Rigidbody2D droppedRb = dropped.GetComponent<Rigidbody2D>();
         if (droppedRb != null)
         {
-            droppedRb.linearVelocity = Vector2.zero;
-            droppedRb.AddForce(Vector2.up * 3f, ForceMode2D.Impulse);
+           droppedRb.linearVelocity = Vector2.zero;
+           droppedRb.AddForce(Vector2.up * 3f, ForceMode2D.Impulse);
+            
         }
-
+        
         WeaponPickup pickup = dropped.GetComponent<WeaponPickup>();
         if (pickup != null)
             pickup.SetPickupDelay(1f);

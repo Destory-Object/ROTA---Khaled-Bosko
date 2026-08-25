@@ -1,6 +1,6 @@
+// CHANGES: added AudioManager.Play("Bounce") on a successful pogo bounce.
 using UnityEngine;
 using UnityEngine.InputSystem;
-
 public class PlayerPogo : MonoBehaviour
 {
     public Transform pogoAttackPoint;
@@ -10,16 +10,12 @@ public class PlayerPogo : MonoBehaviour
     [SerializeField] float bounceForce = 8f;
     private Rigidbody2D playerRb;
     private InputAction attackAction;
-
     private PlayerController pc;
-
     // Offsets
     public float attackDistance = 1f;
     private Vector2 attackOffsetFront = new Vector2(1f, 0f); // in front
     private Vector2 attackOffsetUnder = new Vector2(0f, -1f); // under
-
     Animator anim;
-
     private void Awake()
     {
         pc = FindAnyObjectByType<PlayerController>();
@@ -30,22 +26,16 @@ public class PlayerPogo : MonoBehaviour
         playerRb = GetComponent<Rigidbody2D>();
         attackAction = InputSystem.actions.FindAction("Attack");
     }
-
     private void Update()
     {
-
         pogoAttackPoint.localPosition = attackOffsetFront * attackDistance;
-
-
         if (playerRb.linearVelocity.y < -0.1f)
         {
             pogoAttackPoint.localPosition = attackOffsetUnder * attackDistance;
-
             if (attackAction.WasPressedThisFrame())
                 TestPogo();
         }
     }
-
     void TestPogo()
     {
         Collider2D[] hitEnemies = AttackUtilities.DetectEnemies(pogoAttackPoint.position, pogoAttackRange, enemies);
@@ -59,18 +49,13 @@ public class PlayerPogo : MonoBehaviour
                 if (playerRb.linearVelocity.y <= 0)
                 {
                     Debug.Log("pogo hit" + enemies.name);
-                    //var enemyPatrol = enemies.GetComponent<EnemyPatrol>();
-
                     IHealth enemyHealth = enemies.GetComponent<IHealth>();
-
                     if (enemyHealth != null)
                     {
                         CombatEffects.DealDamage(enemyHealth, damageAmount, enemies.transform.position);
                         playerRb.AddForceY(bounceForce, ForceMode2D.Impulse);
+                        AudioManager.Play("Bounce");
                     }
-
-                    //playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, bounceForce);
-                    //Debug.Log("bounce Applied");
                 }
             }
         }
@@ -79,7 +64,6 @@ public class PlayerPogo : MonoBehaviour
     {
         if (pogoAttackPoint == null)
             return;
-
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(pogoAttackPoint.position, pogoAttackRange);
     }

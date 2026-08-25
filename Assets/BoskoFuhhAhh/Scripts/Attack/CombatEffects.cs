@@ -20,6 +20,7 @@ public class CombatEffects : MonoBehaviour
         bool forceCrit = false)
     {
         if (Instance == null || target == null) return;
+        AudioManager.Play("CritHit");
 
         bool isCrit = forceCrit || Random.value < Instance.critChance;
         int finalDamage = isCrit
@@ -36,6 +37,7 @@ public class CombatEffects : MonoBehaviour
             if (healthBar != null)
                 healthBar.OnDamageTaken();
         }
+
 
         Instance.SpawnPopup(finalDamage, isCrit, popupPosition);
     }

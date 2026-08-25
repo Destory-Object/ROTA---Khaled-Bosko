@@ -1,7 +1,7 @@
+// CHANGES: added AudioManager.Play calls for swing + hit.
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
 public class PlayerSword : MonoBehaviour
 {
     [Header("Attack")]
@@ -9,14 +9,11 @@ public class PlayerSword : MonoBehaviour
     public float attackRange = 0.5f;
     public LayerMask enemyLayers;
     [SerializeField] private int damageAmount;
-
     [Header("Trail")]
     [SerializeField] private TrailRenderer attackTrail;
     [SerializeField] private SwordSlashEffect slashEffect;
-
     private PlayerController pc;
     private WeaponManager weaponManager;
-
     private void Awake()
     {
         pc = GetComponent<PlayerController>();
@@ -24,16 +21,13 @@ public class PlayerSword : MonoBehaviour
         if (attackTrail != null)
             attackTrail.emitting = false;
     }
-
     private void Update()
     {
         if (pc.playerState != "Normal") return;
-
         InputAction slotAction = GetSlotAction();
         if (slotAction != null && slotAction.WasPressedThisFrame())
             Attack();
     }
-
     private InputAction GetSlotAction()
     {
         if (weaponManager.slotOne == WeaponType.Sword)
@@ -42,23 +36,23 @@ public class PlayerSword : MonoBehaviour
             return InputSystem.actions.FindAction("SlotTwo");
         return null;
     }
-
     private void Attack()
     {
         slashEffect?.PlaySlash();
         StartCoroutine(ShowTrail());
-
+        AudioManager.Play("SwordSwing");
         Collider2D[] hitEnemies = AttackUtilities.DetectEnemies(
             attackPoint.position, attackRange, enemyLayers);
-
         foreach (Collider2D enemy in hitEnemies)
         {
             IHealth healthComp = enemy.GetComponent<IHealth>();
             if (healthComp != null)
+            {
                 CombatEffects.DealDamage(healthComp, damageAmount, enemy.transform.position);
+                AudioManager.Play("HitImpact");
+            }
         }
     }
-
     private IEnumerator ShowTrail()
     {
         if (attackTrail != null)
@@ -68,7 +62,6 @@ public class PlayerSword : MonoBehaviour
             attackTrail.emitting = false;
         }
     }
-
     private void OnDrawGizmosSelected()
     {
         if (attackPoint == null) return;

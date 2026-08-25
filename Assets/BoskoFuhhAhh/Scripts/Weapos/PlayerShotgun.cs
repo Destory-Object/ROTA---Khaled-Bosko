@@ -1,3 +1,4 @@
+// CHANGES: replaced local Time.timeScale coroutine with HitStopManager.RequestHitStop (now a serialized field instead of the hardcoded 0.05f), added AudioManager.Play("ShotgunFire").
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,15 +9,16 @@ public class PlayerShotgun : MonoBehaviour
     [Header("Shotgun")]
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private Transform firePoint;
-    [SerializeField] private int pelletsPerShot = 5;
-    [SerializeField] private float spreadAngle = 30f;
-    [SerializeField] private float projectileSpeed = 12f;
-    [SerializeField] private int damagePerPellet = 1;
+    [SerializeField] private int pelletsPerShot = 4;
+    [SerializeField] private float spreadAngle = 25f;
+    [SerializeField] private float projectileSpeed = 24f;
+    [SerializeField] private int damagePerPellet = 2;
     [SerializeField] private float fireRate = 0.8f;
 
     [Header("Feedback")]
     [SerializeField] private TrailRenderer trail;
     [SerializeField] private float knockbackForce = 5f;
+    [SerializeField] private float hitStopDuration = 0.05f;
 
     private PlayerController pc;
     private WeaponManager weaponManager;
@@ -110,8 +112,9 @@ public class PlayerShotgun : MonoBehaviour
             }
         }
 
+        AudioManager.Play("ShotgunFire");
         rb.AddForce(new Vector2(-facing * knockbackForce, 0f), ForceMode2D.Impulse);
-        StartCoroutine(HitStop());
+        HitStopManager.RequestHitStop(hitStopDuration);
     }
 
     private Vector2 RotateVector(Vector2 v, float angleDegrees)
@@ -120,12 +123,5 @@ public class PlayerShotgun : MonoBehaviour
         return new Vector2(
             v.x * Mathf.Cos(rad) - v.y * Mathf.Sin(rad),
             v.x * Mathf.Sin(rad) + v.y * Mathf.Cos(rad));
-    }
-
-    private IEnumerator HitStop()
-    {
-        Time.timeScale = 0f;
-        yield return new WaitForSecondsRealtime(0.05f);
-        Time.timeScale = 1f;
     }
 }

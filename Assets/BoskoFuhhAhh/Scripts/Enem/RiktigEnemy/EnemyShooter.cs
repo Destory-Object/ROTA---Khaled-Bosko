@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿// CHANGES: added AudioManager.Play("EnemyDeath") in Die().
+using System.Collections;
 using UnityEngine;
 
 public class EnemyShooter : MonoBehaviour, IHealth, ILaunchable
@@ -104,7 +105,7 @@ public class EnemyShooter : MonoBehaviour, IHealth, ILaunchable
     {
         isLaunched = true;
 
-       
+
         rb.bodyType = RigidbodyType2D.Dynamic;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         rb.linearVelocity = Vector2.zero;
@@ -192,6 +193,8 @@ public class EnemyShooter : MonoBehaviour, IHealth, ILaunchable
     private void Die()
     {
         GetComponent<ScanEnemy>()?.OnEnemyDied();
+        AudioManager.Play("EnemyDeath");
+
         if (interactablePrefab != null && spawnPoint != null)
             Instantiate(interactablePrefab, spawnPoint.position, Quaternion.identity);
         else if (interactablePrefab != null)

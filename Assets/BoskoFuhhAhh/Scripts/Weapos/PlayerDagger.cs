@@ -1,7 +1,7 @@
+// CHANGES: added AudioManager.Play calls for swing + hit.
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
 public class PlayerDagger : MonoBehaviour
 {
     [Header("Attack")]
@@ -10,14 +10,11 @@ public class PlayerDagger : MonoBehaviour
     [SerializeField] private LayerMask enemyLayers;
     [SerializeField] private int damageAmount = 1;
     [SerializeField] private float attackCooldown = 0.25f;
-
     [Header("Trail")]
     [SerializeField] private TrailRenderer attackTrail;
-
     private PlayerController pc;
     private WeaponManager weaponManager;
     private float lastAttackTime = -99f;
-
     private void Awake()
     {
         pc = GetComponent<PlayerController>();
@@ -25,23 +22,19 @@ public class PlayerDagger : MonoBehaviour
         if (attackTrail != null)
             attackTrail.emitting = false;
     }
-
     private void OnDisable()
     {
         if (attackTrail != null)
             attackTrail.emitting = false;
     }
-
     private void Update()
     {
         if (pc.playerState != "Normal") return;
         if (Time.time < lastAttackTime + attackCooldown) return;
-
         InputAction slotAction = GetSlotAction();
         if (slotAction != null && slotAction.WasPressedThisFrame())
             Attack();
     }
-
     private InputAction GetSlotAction()
     {
         if (weaponManager.slotOne == WeaponType.Dagger)
@@ -50,23 +43,24 @@ public class PlayerDagger : MonoBehaviour
             return InputSystem.actions.FindAction("SlotTwo");
         return null;
     }
-
     private void Attack()
     {
         lastAttackTime = Time.time;
         StartCoroutine(ShowTrail());
-
+        AudioManager.Play("DaggerSwing");
         Collider2D[] hitEnemies = AttackUtilities.DetectEnemies(
             attackPoint.position, attackRange, enemyLayers);
-
         foreach (Collider2D enemy in hitEnemies)
         {
             IHealth healthComp = enemy.GetComponent<IHealth>();
             if (healthComp != null)
+            {
                 CombatEffects.DealDamage(healthComp, damageAmount, enemy.transform.position);
+                CameraShake.SoftShake();
+                AudioManager.Play("HitImpact");
+            }
         }
     }
-
     private IEnumerator ShowTrail()
     {
         if (attackTrail != null)
@@ -76,7 +70,6 @@ public class PlayerDagger : MonoBehaviour
             attackTrail.emitting = false;
         }
     }
-
     private void OnDrawGizmosSelected()
     {
         if (attackPoint == null) return;

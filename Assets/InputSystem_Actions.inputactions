@@ -104,6 +104,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "SlotOne",
+                    "type": "Button",
+                    "id": "3f86f368-b41f-4bdb-8327-326985559da7",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "SlotTwo",
+                    "type": "Button",
+                    "id": "78ab6d27-c309-47cd-8e7c-d640edc4257a",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -478,6 +496,28 @@
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "PogoAttack",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d509a231-02b7-407a-9d82-73d791a4f14b",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SlotOne",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1889aebf-38fd-4d80-b04c-47cd75a11444",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SlotTwo",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

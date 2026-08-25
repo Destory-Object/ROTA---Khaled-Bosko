@@ -1,3 +1,4 @@
+// CHANGES: added AudioManager.Play("Jump") / ("DoubleJump") calls in ReadPlayerInputs.
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,7 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float moveSpeed;
 
     [SerializeField] float jumpForce;
-   
+
     [Header("Grounded Info")]
     [SerializeField] float groundCheckRadius = 0.2f;
     [SerializeField] Transform groundCheckPosition;
@@ -65,14 +66,14 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-       // ReadPlayerInputs();
+        // ReadPlayerInputs();
         CheckGrounded();
         HandleCoyoteTime();
 
         switch (playerState)
         {
             case "Normal":
-         
+
                 ReadPlayerInputs();
                 break;
 
@@ -84,11 +85,11 @@ public class PlayerController : MonoBehaviour
                 ReadPlayerInputs();
                 break;
 
-            case "parryState":                                      
+            case "parryState":
                 ReadPlayerInputs();
 
                 break;
-            
+
             case "Scaning":
                 ReadPlayerInputs();
 
@@ -109,8 +110,9 @@ public class PlayerController : MonoBehaviour
             GetComponent<PlayerDamageReceiver>().SwitchDamageRecieve(true);
         }
     }
-    private void FixedUpdate() {
-        
+    private void FixedUpdate()
+    {
+
         if (GetComponent<PlayerDamageReceiver>().isKnockedBack) return;
 
         if (playerState == "parryState" || inputActions.IsParrying())
@@ -118,9 +120,10 @@ public class PlayerController : MonoBehaviour
             playerRb.linearVelocityX = 0;
             GetComponent<PlayerDamageReceiver>().SwitchDamageRecieve(false);
             return;
-        }else
+        }
+        else
         {
-            GetComponent<PlayerDamageReceiver>().SwitchDamageRecieve(true); 
+            GetComponent<PlayerDamageReceiver>().SwitchDamageRecieve(true);
         }
 
 
@@ -166,21 +169,11 @@ public class PlayerController : MonoBehaviour
     }
     void NormalMovement()
     {
-        //Vector2 currentVelocity = playerRb.linearVelocity;
-        //currentVelocity.x = moveVector.x * moveSpeed;
-        //playerRb.linearVelocity = currentVelocity;
-        
-        
         playerRb.linearVelocityX = moveVector.x * moveSpeed;
     }
     void PlayerIsDashing()
     {
-
-        //Vector2 currentVelocity = playerRb.linearVelocity;
-        //currentVelocity.x = moveVector.x * moveSpeed;
-        //playerRb.linearVelocity = currentVelocity;
-
-       playerRb.linearVelocityX = moveVector.x * dashSpeed;
+        playerRb.linearVelocityX = moveVector.x * dashSpeed;
     }
     void PlayerIsScaning()
     {
@@ -205,17 +198,17 @@ public class PlayerController : MonoBehaviour
         {
             if (isGrounded || coyoteTimer > 0)
             {
-               
                 playerRb.linearVelocity = Vector2.zero;
                 playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-                hasDoubleJumped = false; 
+                hasDoubleJumped = false;
+                AudioManager.Play("Jump");
             }
             else if (canDoubleJump && !hasDoubleJumped)
             {
-                
                 playerRb.linearVelocity = new Vector2(playerRb.linearVelocity.x, 0f);
                 playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
                 hasDoubleJumped = true;
+                AudioManager.Play("DoubleJump");
             }
         }
 
@@ -225,7 +218,7 @@ public class PlayerController : MonoBehaviour
             Debug.Log("Suppost to Dash");
             playerState = "Dashing";
         }
-        if(dashAction.WasReleasedThisFrame())
+        if (dashAction.WasReleasedThisFrame())
         {
             playerState = "Normal";
         }
@@ -234,14 +227,14 @@ public class PlayerController : MonoBehaviour
         {
             playerState = "Scaning";
         }
-        
+
     }
     private void HandleCoyoteTime()
     {
         if (isGrounded)
         {
             coyoteTimer = CoyoteTime;
-            hasDoubleJumped = false; 
+            hasDoubleJumped = false;
         }
         else
         {
@@ -251,7 +244,7 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-        
+
     private void CheckGrounded()
     {
         isGrounded = Physics2D.OverlapCircle(groundCheckPosition.position, groundCheckRadius, groundedLayers);
